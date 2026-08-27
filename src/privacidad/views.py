@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -19,6 +20,7 @@ def _solo_central(request):
     )
 
 
+@login_required
 def panel(request):
     if not es_central(request.user):
         return _solo_central(request)
@@ -29,6 +31,7 @@ def panel(request):
     )
 
 
+@login_required
 def ejecutar_ahora(request):
     if not es_central(request.user):
         return _solo_central(request)
@@ -38,6 +41,7 @@ def ejecutar_ahora(request):
     return redirect("privacidad:panel")
 
 
+@login_required
 def anonimizar_persona_view(request, pk):
     if not es_central(request.user):
         return _solo_central(request)

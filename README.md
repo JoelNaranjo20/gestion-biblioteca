@@ -9,6 +9,8 @@ anonimización RGPD de prestatarios.
   (`spec.md`, `plan.md`, `tech-stack.md`, `data-model.md`, `contracts/`, `quickstart.md`,
   `tasks.md`).
 - Principios del proyecto: [`.specify/memory/constitution.md`](.specify/memory/constitution.md).
+- Despliegue y operación: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md) ·
+  Seguridad: [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md).
 
 ## Stack
 
@@ -51,13 +53,15 @@ manage.exe anonimizar_prestatarios
 
 ## Estado de la implementación
 
-**69/83 tareas** completadas (ver [`specs/001-catalog-loans/tasks.md`](specs/001-catalog-loans/tasks.md)).
+**83/83 tareas** completadas (ver [`specs/001-catalog-loans/tasks.md`](specs/001-catalog-loans/tasks.md)).
 
 - ✅ Setup + Foundational, US1 (catálogo), US2 (préstamos/devoluciones/correcciones),
   US3 (búsqueda), US4 (activos/vencidos/historial/reclamación), US5 (configuración),
   US6 (cuentas y operadores), anonimización RGPD (servicio + comando + panel).
-- ✅ 36 pruebas en verde (unitarias + integración + concurrencia) contra PostgreSQL 16;
-  `ruff` limpio; `manage.py check` sin incidencias; migraciones aplican.
-- ⏳ Pendiente: vendorizar assets HTMX/Bootstrap (hoy hay un CSS propio de respaldo),
-  pruebas de contrato por endpoint, comando `sembrar_datos_demo` + medición de rendimiento,
-  finalización del empaquetado (WebView2, icono), repaso de seguridad y validación E1–E11.
+- ✅ HTMX 2 y Bootstrap 5.3 vendorizados (sin CDN).
+- ✅ **80 pruebas en verde** (unitarias + integración + concurrencia + contrato) contra
+  PostgreSQL 16; `ruff` limpio; `manage.py check` sin incidencias; migraciones aplican.
+- ✅ `sembrar_datos_demo`: 20.000 títulos / 40.000 ejemplares en ~3 s; búsqueda < 40 ms
+  (holgado frente a los 2 s de SC-003).
+- ✅ Empaquetado: comprobación de WebView2 y soporte de icono en el lanzador.
+- ✅ Docs de despliegue y seguridad (`docs/`).

@@ -332,6 +332,7 @@ def historial_persona(documento: str):
 def registrar_reclamacion(
     *, actor: User, prestamo: Prestamo, fecha: datetime.date, medio: str, notas: str = ""
 ) -> GestionReclamacion:
+    prestamo = Prestamo.objects.get(pk=prestamo.pk)
     if not prestamo.activo:
         raise ValidationError("No se pueden añadir gestiones a un préstamo cerrado o anulado.")
     if not prestamo.esta_vencido:

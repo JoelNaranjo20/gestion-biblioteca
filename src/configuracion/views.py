@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from cuentas.models import EntradaAuditoria
@@ -11,6 +12,7 @@ from .forms import ParametrosForm
 from .models import get_parametros
 
 
+@login_required
 def parametros(request):
     if not es_central(request.user):
         return render(

@@ -35,7 +35,7 @@ def alta_biblioteca_view(request):
                 password=form.cleaned_data["password"],
                 contacto=form.cleaned_data["contacto"],
             )
-            login(request, operador.user)
+            login(request, operador.user, backend="django.contrib.auth.backends.ModelBackend")
             messages.success(request, "Biblioteca dada de alta. Ya puedes crear operadores.")
             return redirect("inicio")
     else:

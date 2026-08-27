@@ -121,7 +121,7 @@ def titulos_con_recuento():
     return Titulo.objects.annotate(
         n_total=Count("ejemplares"),
         n_disponibles=Count("ejemplares", filter=Q(ejemplares__estado=Ejemplar.Estado.DISPONIBLE)),
-    )
+    ).order_by("titulo", "autor")
 
 
 def buscar_titulos(*, texto: str = "", campo: str = "titulo"):

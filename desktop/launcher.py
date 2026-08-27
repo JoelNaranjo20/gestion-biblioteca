@@ -44,7 +44,33 @@ def _servir(puerto: int) -> None:
     serve(application, host="127.0.0.1", port=puerto, threads=6, _quiet=True)
 
 
+def _comprobar_webview2() -> None:
+    """Avisa si falta el runtime de WebView2 (necesario para la ventana en Windows 10/11)."""
+    if sys.platform != "win32":
+        return
+    import winreg
+
+    claves = [
+        r"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
+        r"SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
+    ]
+    for raiz in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
+        for clave in claves:
+            try:
+                with winreg.OpenKey(raiz, clave) as k:
+                    if winreg.QueryValueEx(k, "pv")[0] not in (None, "", "0.0.0.0"):
+                        return
+            except OSError:
+                continue
+    print(
+        "[aviso] No se detecta el runtime de Microsoft Edge WebView2.\n"
+        "        Instálalo desde https://developer.microsoft.com/microsoft-edge/webview2/\n"
+        "        (o abre http://127.0.0.1 en el navegador como alternativa)."
+    )
+
+
 def main() -> None:
+    _comprobar_webview2()
     _preparar_django()
     puerto = _puerto_libre()
     hilo = threading.Thread(target=_servir, args=(puerto,), daemon=True)
@@ -52,6 +78,7 @@ def main() -> None:
 
     import webview  # pywebview
 
+    icono = RAIZ / "desktop" / "icono.ico"
     webview.create_window(
         "Biblioteca Municipal",
         f"http://127.0.0.1:{puerto}/",
@@ -59,7 +86,7 @@ def main() -> None:
         height=800,
         min_size=(900, 600),
     )
-    webview.start()
+    webview.start(icon=str(icono) if icono.exists() else None)
 
 
 if __name__ == "__main__":

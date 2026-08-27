@@ -30,7 +30,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 - [X] T003 [P] Configurar **ruff** (lint + formato) en `pyproject.toml` y `.pre-commit-config.yaml` con hooks: ruff, ruff-format, `manage.py check`, `makemigrations --check`
 - [X] T004 [P] Configurar **pytest** en `pyproject.toml`/`pytest.ini`: pytest-django, pytest-cov, factory_boy, Faker; `DJANGO_SETTINGS_MODULE` de test y `--reuse-db`
 - [X] T005 [P] Crear `.env.example` (DATABASE_URL, SECRET_KEY, DJANGO_DEBUG, APP_ENTORNO, SESSION_INACTIVIDAD_SEGUNDOS=1800, RETENCION_PRESTATARIOS_DIAS=730) y `src/gestion_biblioteca/settings.py` gobernado por `APP_ENTORNO` (dev/desktop/test) con `LANGUAGE_CODE='es'`, `TIME_ZONE='Europe/Madrid'`, `USE_TZ=True`
-- [ ] T006 [P] Vendorizar HTMX 2.x, Bootstrap 5.3 (CSS/JS) y Bootstrap Icons en `src/common/static/vendor/`; configurar whitenoise + `ManifestStaticFilesStorage` en settings
+- [X] T006 [P] Vendorizar HTMX 2.x, Bootstrap 5.3 (CSS/JS) y Bootstrap Icons en `src/common/static/vendor/`; configurar whitenoise + `ManifestStaticFilesStorage` en settings
 - [X] T007 Crear el proyecto Django `gestion_biblioteca` y registrar las 6 apps vacías en `INSTALLED_APPS`
 
 ---
@@ -71,7 +71,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 1
 
-- [ ] T025 [P] [US1] Tests de contrato de `/catalogo/titulos/*` y `/catalogo/ejemplares/*` en `tests/contract/test_catalogo.py`
+- [X] T025 [P] [US1] Tests de contrato de `/catalogo/titulos/*` y `/catalogo/ejemplares/*` en `tests/contract/test_catalogo.py`
 - [X] T026 [P] [US1] Test de integración del ciclo de catálogo (alta título+ejemplar, edición, retirada, recuentos) en `tests/integration/test_us1_catalogo.py`
 
 ### Implementation for User Story 1
@@ -97,7 +97,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 2
 
-- [ ] T035 [P] [US2] Tests de contrato de `/prestamos/nuevo`, `/prestamos/devolver`, `/prestamos/<id>/anular`, `/prestamos/<id>/anular-devolucion`, `/prestamos/<id>/corregir-ejemplar`, `/catalogo/ejemplares/<id>/anular-retirada` en `tests/contract/test_prestamos.py`
+- [X] T035 [P] [US2] Tests de contrato de `/prestamos/nuevo`, `/prestamos/devolver`, `/prestamos/<id>/anular`, `/prestamos/<id>/anular-devolucion`, `/prestamos/<id>/corregir-ejemplar`, `/catalogo/ejemplares/<id>/anular-retirada` en `tests/contract/test_prestamos.py`
 - [X] T036 [P] [US2] Tests de integración: préstamo→devolución, devolución con retraso, bloqueo por tope, anular préstamo/devolución/retirada, corrección de ejemplar equivocado en `tests/integration/test_us2_prestamos.py`
 - [X] T037 [P] [US2] Test de concurrencia (`TransactionTestCase`): dos préstamos simultáneos del mismo ejemplar → exactamente uno tiene éxito, sin dos préstamos activos, en `tests/integration/test_us2_concurrencia.py`
 
@@ -127,7 +127,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 6
 
-- [ ] T049 [P] [US6] Tests de contrato de `/inicio/alta-biblioteca/`, `/acceso/entrar/`, `/operadores/*` en `tests/contract/test_cuentas.py`
+- [X] T049 [P] [US6] Tests de contrato de `/inicio/alta-biblioteca/`, `/acceso/entrar/`, `/operadores/*` en `tests/contract/test_cuentas.py`
 - [X] T050 [P] [US6] Test de integración: alta biblioteca → crear operador → login operador → atribución en `EntradaAuditoria`; desactivar → login falla; operador → 403 en configuración, en `tests/integration/test_us6_cuentas.py`
 
 ### Implementation for User Story 6
@@ -149,8 +149,8 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 3
 
-- [ ] T055 [P] [US3] Tests de contrato de `/catalogo/buscar/`, `/catalogo/buscar.json`, `/catalogo/ejemplar-por-codigo.json` en `tests/contract/test_busqueda.py`
-- [ ] T056 [P] [US3] Test de integración: búsqueda parcial insensible a acentos/mayúsculas + recuentos con ejemplares en 3 estados en `tests/integration/test_us3_busqueda.py`
+- [X] T055 [P] [US3] Tests de contrato de `/catalogo/buscar/`, `/catalogo/buscar.json`, `/catalogo/ejemplar-por-codigo.json` en `tests/contract/test_busqueda.py`
+- [X] T056 [P] [US3] Test de integración: búsqueda parcial insensible a acentos/mayúsculas + recuentos con ejemplares en 3 estados en `tests/integration/test_us3_busqueda.py`
 
 ### Implementation for User Story 3
 
@@ -171,8 +171,8 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 4
 
-- [ ] T061 [P] [US4] Tests de contrato de `/prestamos/activos`, `/prestamos/vencidos`, `/prestamos/<id>/`, `/prestamos/<id>/reclamaciones/nueva`, `/personas/historial` en `tests/contract/test_consultas.py`
-- [ ] T062 [P] [US4] Test de integración: listas de activos/vencidos, historial por ejemplar y por persona, visibilidad de la última gestión, rechazo de gestión sobre préstamo cerrado, en `tests/integration/test_us4_consultas.py`
+- [X] T061 [P] [US4] Tests de contrato de `/prestamos/activos`, `/prestamos/vencidos`, `/prestamos/<id>/`, `/prestamos/<id>/reclamaciones/nueva`, `/personas/historial` en `tests/contract/test_consultas.py`
+- [X] T062 [P] [US4] Test de integración: listas de activos/vencidos, historial por ejemplar y por persona, visibilidad de la última gestión, rechazo de gestión sobre préstamo cerrado, en `tests/integration/test_us4_consultas.py`
 
 ### Implementation for User Story 4
 
@@ -195,7 +195,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Tests for User Story 5
 
-- [ ] T069 [P] [US5] Test de contrato de `/configuracion/prestamos/` (GET/POST; 403 para operador) en `tests/contract/test_configuracion.py`
+- [X] T069 [P] [US5] Test de contrato de `/configuracion/prestamos/` (GET/POST; 403 para operador) en `tests/contract/test_configuracion.py`
 - [X] T070 [P] [US5] Test de integración: el cambio de plazo solo afecta a préstamos nuevos; el cambio de tope afecta a la validación; valores inválidos rechazados, en `tests/integration/test_us5_configuracion.py`
 
 ### Implementation for User Story 5
@@ -222,11 +222,11 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 ### Rendimiento, empaquetado y seguridad
 
 - [X] T078 [P] Tests unitarios de reglas de dominio (fecha límite, días de retraso, tope, normalización de texto, ventana de retención) en `tests/unit/`
-- [ ] T079 Management command `sembrar_datos_demo` (20.000 títulos / 50.000 ejemplares) en `src/catalogo/management/commands/` y verificación de que la búsqueda responde < 2 s (SC-003) y la disponibilidad se refleja < 2 s (SC-007); revisar `select_related`/`prefetch_related` y los índices
-- [ ] T080 [P] Finalizar el empaquetado de escritorio: comprobación del runtime WebView2 con mensaje amable, `migrate` en el primer arranque, icono de la app; documentar la opción MSI en `docs/`
-- [ ] T081 [P] Repaso de seguridad: `ALLOWED_HOSTS`, `DEBUG=False` en `desktop`, configuración de django-axes, gestión de `SECRET_KEY`, `.env.example` completo
-- [ ] T082 [P] Documentación en `docs/` y `README.md` raíz: instalación, alta del proyecto Supabase, Programador de tareas de Windows para la anonimización, verificación mensual de copias de seguridad
-- [ ] T083 Ejecutar los escenarios E1–E11 de [quickstart.md](./quickstart.md) y corregir desviaciones
+- [X] T079 Management command `sembrar_datos_demo` (20.000 títulos / 50.000 ejemplares) en `src/catalogo/management/commands/` y verificación de que la búsqueda responde < 2 s (SC-003) y la disponibilidad se refleja < 2 s (SC-007); revisar `select_related`/`prefetch_related` y los índices
+- [X] T080 [P] Finalizar el empaquetado de escritorio: comprobación del runtime WebView2 con mensaje amable, `migrate` en el primer arranque, icono de la app; documentar la opción MSI en `docs/`
+- [X] T081 [P] Repaso de seguridad: `ALLOWED_HOSTS`, `DEBUG=False` en `desktop`, configuración de django-axes, gestión de `SECRET_KEY`, `.env.example` completo
+- [X] T082 [P] Documentación en `docs/` y `README.md` raíz: instalación, alta del proyecto Supabase, Programador de tareas de Windows para la anonimización, verificación mensual de copias de seguridad
+- [X] T083 Ejecutar los escenarios E1–E11 de [quickstart.md](./quickstart.md) y corregir desviaciones
 
 ---
 
