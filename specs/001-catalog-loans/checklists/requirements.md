@@ -41,3 +41,4 @@
   - Corrección de errores: anular/corregir operación reciente con motivo, sin borrar el rastro (FR-038–FR-041, SC-011).
   - Localización del ejemplar: por código (tecleado o escaneado) o por búsqueda de título (FR-009a–FR-009b).
   - Vencidos: listar + registrar gestiones de reclamación; sin envío de comunicaciones (FR-026a–FR-026d, SC-012).
+- Corrección posterior (durante `/speckit-plan`): se revierte "puesto compartido sin login". Ahora hay autenticación: cuenta central de la biblioteca (con correo) + subcuentas de operador sin correo, con atribución de cada operación (FR-030–FR-030f, FR-031, US6, SC-013–SC-014). Aplicación de escritorio con base de datos en la nube; requiere conexión a Internet.

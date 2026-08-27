@@ -20,6 +20,7 @@
 - Q: ¿Cómo se corrigen los errores del personal al registrar una operación (préstamo/devolución/retirada)? → A: El personal puede anular o corregir una operación reciente indicando un motivo; la corrección se registra con fecha y hora, la operación original se marca como anulada (no se borra) y el estado del ejemplar se recalcula.
 - Q: ¿Cómo localiza el personal el ejemplar para prestar o devolver? → A: Indistintamente por código de ejemplar (tecleado o escaneado con lector de código de barras) o por búsqueda de título/autor. El código de barras se introduce como texto, sin integración especial; los ejemplares pueden etiquetarse progresivamente.
 - Q: Con los préstamos vencidos, ¿solo listarlos o también apoyar la reclamación? → A: Listar los vencidos y permitir registrar manualmente las gestiones de reclamación por préstamo (fecha, medio, notas). El sistema no genera ni envía comunicaciones a los prestatarios.
+- Corrección (posterior, durante la planificación): se **revierte** la decisión de "puesto compartido sin inicio de sesión individual". El sistema **requiere autenticación**: la biblioteca se da de alta como **cuenta central** (con correo y contraseña) y crea desde ella **subcuentas de operador** ("administradores"), identificadas por nombre de usuario y contraseña **sin correo**. Cada operación que crea o modifica datos queda **atribuida a la subcuenta** que la realizó, para saber quién hizo qué. Solo la cuenta central gestiona subcuentas y la configuración de préstamo.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -116,6 +117,25 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 
 ---
 
+### User Story 6 - Alta de la biblioteca y gestión de operadores (Priority: P1)
+
+Una persona responsable da de alta la biblioteca creando la cuenta central (correo + contraseña) y, desde ella, crea subcuentas de operador (nombre de usuario + contraseña, sin correo) para el personal. Los operadores inician sesión con su subcuenta para trabajar y cada operación queda atribuida a quien la hizo.
+
+**Why this priority**: Sin cuenta central ni subcuentas nadie puede autenticarse ni operar, y no habría atribución de operaciones; es un requisito previo al resto.
+
+**Independent Test**: Se crea la cuenta central, se añade una subcuenta de operador, se inicia sesión con ella, se realiza un préstamo y se comprueba en el historial que aparece atribuido a esa subcuenta; luego se desactiva la subcuenta y se comprueba que ya no puede iniciar sesión pero su operación anterior sigue atribuida.
+
+**Acceptance Scenarios**:
+
+1. **Given** que la biblioteca no está registrada, **When** una persona responsable crea la cuenta central con correo, contraseña y nombre de la biblioteca, **Then** la cuenta central queda creada y puede iniciar sesión.
+2. **Given** la cuenta central con sesión iniciada, **When** crea una subcuenta de operador con un nombre de usuario y una contraseña, **Then** la subcuenta queda activa y puede iniciar sesión sin usar correo.
+3. **Given** una subcuenta de operador con sesión iniciada, **When** registra un préstamo, **Then** el historial del ejemplar muestra ese préstamo atribuido a esa subcuenta con su fecha y hora.
+4. **Given** una subcuenta de operador, **When** la cuenta central la desactiva, **Then** esa subcuenta no puede iniciar sesión y sus operaciones anteriores siguen atribuidas a ella.
+5. **Given** una subcuenta de operador (no central), **When** intenta cambiar la configuración de préstamo o crear otra subcuenta, **Then** el sistema lo impide indicando que es una acción reservada a la cuenta central.
+6. **Given** una biblioteca con una subcuenta "mostrador1", **When** la cuenta central intenta crear otra subcuenta con el mismo nombre de usuario, **Then** el sistema lo rechaza por nombre de usuario duplicado.
+
+---
+
 ### Edge Cases
 
 - **Ejemplar no disponible**: intento de préstamo de un ejemplar "prestado" o "retirado" → el sistema lo impide con un mensaje que explica el motivo.
@@ -139,6 +159,11 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 - **Código de ejemplar no encontrado o etiqueta ilegible**: si el código introducido no existe o no se puede leer, el sistema lo indica y el personal recurre a la búsqueda por título para localizar el ejemplar.
 - **Gestión de reclamación sobre un préstamo ya devuelto**: no se pueden añadir gestiones a un préstamo cerrado; las registradas antes de la devolución se conservan en el historial.
 - **Reclamación sin datos de contacto**: si la persona no tiene contacto guardado, el sistema permite igualmente registrar una gestión (p. ej. "presencial") pero avisa de que no hay teléfono ni correo.
+- **Sin conexión a Internet**: si se pierde la conexión con la base de datos en la nube, el sistema muestra un aviso claro y no permite registrar operaciones hasta recuperarla (no hay modo sin conexión).
+- **Operador desactivado con historial**: al desactivar una subcuenta, sus operaciones pasadas siguen atribuidas a ella; simplemente no puede volver a iniciar sesión.
+- **Cambio de operador en el puesto**: al cerrar sesión un operador e iniciar otro, las operaciones siguientes se atribuyen al nuevo operador.
+- **Nombre de usuario de subcuenta duplicado**: la cuenta central no puede crear dos subcuentas con el mismo nombre de usuario en la misma biblioteca.
+- **Intento de un operador de cambiar la configuración o gestionar subcuentas**: el sistema lo impide e indica que es una acción reservada a la cuenta central.
 
 ## Requirements *(mandatory)*
 
@@ -197,10 +222,19 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 - **FR-028**: Los cambios en los parámetros de préstamo MUST aplicarse solo a los préstamos registrados después del cambio, sin alterar los existentes ni sus fechas límite.
 - **FR-029**: El sistema MUST usar, mientras no se configuren otros valores, un plazo de préstamo por defecto de 15 días naturales y un máximo de 3 préstamos activos por persona.
 
+**Cuentas y autenticación**
+
+- **FR-030**: El acceso al sistema MUST requerir autenticación; el público no tiene acceso. Existen dos tipos de credencial: la **cuenta central** de la biblioteca y las **subcuentas de operador** creadas desde ella.
+- **FR-030a**: El sistema MUST permitir dar de alta una biblioteca creando su cuenta central con un correo electrónico, una contraseña y los datos de la biblioteca (nombre y, opcionalmente, datos de contacto). El correo solo se usa para la cuenta central.
+- **FR-030b**: La cuenta central MUST poder crear, renombrar, desactivar y reactivar subcuentas de operador, y restablecer su contraseña. Cada subcuenta se identifica con un nombre de usuario único dentro de la biblioteca y una contraseña, **sin correo electrónico**.
+- **FR-030c**: Para operar, una persona del personal MUST iniciar sesión con una subcuenta de operador (o con la cuenta central). El sistema MUST permitir cerrar la sesión y cambiar de operador en el mismo puesto.
+- **FR-030d**: El sistema MUST atribuir toda operación que crea o modifica datos (alta/edición de catálogo, retirada y reactivación de ejemplares, préstamo, devolución, corrección/anulación, gestión de reclamación, anonimización y cambios de configuración) a la subcuenta autenticada que la realizó, junto con su fecha y hora.
+- **FR-030e**: Solo la cuenta central MUST poder gestionar subcuentas de operador y modificar la configuración de préstamo (FR-027). Las subcuentas de operador pueden realizar el resto de operaciones.
+- **FR-030f**: Las subcuentas desactivadas MUST NOT poder iniciar sesión, pero MUST conservarse para no perder la atribución histórica de las operaciones que registraron.
+
 **Trazabilidad y acceso**
 
-- **FR-030**: El sistema MUST registrar, para cada préstamo y cada devolución, la fecha y hora en que se registró la operación.
-- **FR-031**: El acceso al sistema MUST estar restringido al personal de la biblioteca; el público no tiene acceso. El sistema se usa en puestos de trabajo compartidos del personal, sin inicio de sesión individual; en consecuencia, cada operación registra la fecha y hora (FR-030) pero no la persona que la realizó, y el sistema no restringe funciones por rol de usuario.
+- **FR-031**: El sistema MUST conservar un registro (historial de auditoría) de las operaciones que crean o modifican datos, con la subcuenta autora, la fecha y la hora, consultable al menos por ejemplar (FR-025) y por préstamo.
 - **FR-032**: El sistema MUST mantener un directorio de personas prestatarias con documento identificativo y nombre obligatorios y contacto opcional. La ficha se crea automáticamente la primera vez que se presta a esa persona (identificada por su documento) y se reutiliza en préstamos posteriores. El directorio NO incluye carné, cuota ni estado de socio.
 - **FR-033**: El sistema MUST impedir registrar un préstamo cuando la persona ya tiene un número de préstamos activos igual o superior al máximo configurado (por defecto 3), contando también los préstamos vencidos, e informar del número de préstamos activos y del tope vigente.
 
@@ -220,13 +254,16 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 
 ### Key Entities *(include if feature involves data)*
 
+- **Biblioteca (cuenta central)**: la organización usuaria del sistema. Atributos: nombre de la biblioteca, correo de acceso, contraseña, datos de contacto (opcional). Relación: tiene una o varias Subcuentas de operador; es propietaria de todo el catálogo, los préstamos y la configuración.
+- **Subcuenta de operador**: credencial de una persona del personal dentro de una Biblioteca. Atributos: nombre de usuario (único en la biblioteca), contraseña, tipo (central / operador), estado (activa / desactivada). Relación: pertenece a una Biblioteca; queda registrada como autora de cada operación que crea o modifica datos.
 - **Título**: obra catalogada. Atributos: título, autor, ISBN (opcional), editorial (opcional), año (opcional), materia/categoría (opcional). Relación: tiene uno o varios Ejemplares.
 - **Ejemplar**: copia física de un Título. Atributos: código de ejemplar (único en el catálogo), estado (disponible / prestado / retirado), motivo de retirada (cuando aplica). Relación: pertenece a un Título; participa en cero o varios Préstamos a lo largo del tiempo.
 - **Persona prestataria**: quien recibe un ejemplar en préstamo. Atributos: documento identificativo (clave de identificación), nombre, contacto (opcional), estado (activa / anonimizada), fecha del último préstamo. La ficha se crea en el primer préstamo y se reutiliza; pasa a "anonimizada" a los 2 años sin préstamos (FR-034) o a petición (FR-035). No incluye carné ni estado de socio.
-- **Préstamo**: entrega temporal de un Ejemplar a una Persona prestataria. Atributos: fecha de préstamo, fecha límite de devolución, fecha real de devolución (vacía mientras está activo), indicador y días de retraso, marca temporal de registro de cada operación, estado del registro (efectivo / anulado). Relación: vincula un Ejemplar y una Persona prestataria; el vínculo con la persona se elimina cuando esta se anonimiza, y el préstamo se conserva sin identificación.
-- **Corrección de operación**: anulación o rectificación de una operación previa (préstamo, devolución o retirada). Atributos: tipo (anulación / corrección), motivo, fecha y hora. Relación: referencia a la operación original, que queda marcada como "anulada".
-- **Gestión de reclamación**: intento de contacto con el prestatario por un préstamo vencido. Atributos: fecha, medio (teléfono / correo electrónico / presencial / otro), notas (opcional). Relación: pertenece a un Préstamo; se anonimiza con la persona.
-- **Configuración de préstamo**: parámetros operativos globales. Atributos: plazo de préstamo en días naturales (por defecto 15), número máximo de préstamos activos por persona (por defecto 3).
+- **Préstamo**: entrega temporal de un Ejemplar a una Persona prestataria. Atributos: fecha de préstamo, fecha límite de devolución, fecha real de devolución (vacía mientras está activo), indicador y días de retraso, subcuenta que registró el préstamo y subcuenta que registró la devolución, marca temporal de cada operación, estado del registro (efectivo / anulado). Relación: vincula un Ejemplar y una Persona prestataria; el vínculo con la persona se elimina cuando esta se anonimiza, y el préstamo se conserva sin identificación.
+- **Corrección de operación**: anulación o rectificación de una operación previa (préstamo, devolución o retirada). Atributos: tipo (anulación / corrección), motivo, fecha y hora, subcuenta que la realizó. Relación: referencia a la operación original, que queda marcada como "anulada".
+- **Gestión de reclamación**: intento de contacto con el prestatario por un préstamo vencido. Atributos: fecha, medio (teléfono / correo electrónico / presencial / otro), notas (opcional), subcuenta que la registró. Relación: pertenece a un Préstamo; se anonimiza con la persona.
+- **Entrada de auditoría**: registro de una operación que crea o modifica datos. Atributos: tipo de operación, entidad afectada, fecha y hora, subcuenta autora. Relación: referencia a la entidad afectada (ejemplar, préstamo, persona, configuración o subcuenta).
+- **Configuración de préstamo**: parámetros operativos globales de la biblioteca. Atributos: plazo de préstamo en días naturales (por defecto 15), número máximo de préstamos activos por persona (por defecto 3).
 
 ## Success Criteria *(mandatory)*
 
@@ -244,10 +281,13 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 - **SC-010**: Transcurridos 2 años desde el último préstamo de una persona sin préstamos activos, el sistema no conserva ningún dato que permita identificarla; sus préstamos anteriores siguen disponibles de forma anonimizada en el historial del ejemplar.
 - **SC-011**: El personal corrige una operación mal registrada (préstamo, devolución o retirada) desde la propia aplicación, sin intervención técnica, y el estado del ejemplar queda correcto de inmediato, conservándose el rastro de la operación anulada.
 - **SC-012**: Para cada préstamo vencido, el personal ve en la propia lista de vencidos si ya se ha reclamado y la fecha de la última gestión, sin abrir otra pantalla.
+- **SC-013**: El 100 % de las operaciones que crean o modifican datos quedan atribuidas a una subcuenta identificada; para cualquier préstamo, devolución, corrección o cambio de configuración se puede saber qué subcuenta lo hizo y cuándo.
+- **SC-014**: La cuenta central puede dar de alta una subcuenta de operador y dejarla operativa en menos de 1 minuto, sin usar correo electrónico.
 
 ## Assumptions
 
-- El sistema es una aplicación interna de la biblioteca; no hay portal ni acceso para el público en esta versión.
+- El sistema es una aplicación de escritorio interna de la biblioteca (varios puestos en una única sede); no hay portal ni acceso para el público en esta versión.
+- Los datos se almacenan en un servicio de base de datos en la nube (decisión técnica registrada en `plan.md`). El sistema necesita conexión a Internet para operar; no hay modo sin conexión en esta versión.
 - Quedan fuera de alcance: gestión de socios con carné y su ciclo de vida, reservas de ejemplares en cola, renovaciones de préstamo, cálculo o cobro de multas y sanciones, importación/migración masiva de datos desde ficheros o sistemas externos, y generación o envío de comunicaciones/avisos a prestatarios.
 - La reclamación de préstamos vencidos (llamadas, correos, cartas) se realiza fuera del sistema; este solo registra que se hizo, cuándo y por qué medio.
 - No existe un sistema de préstamos previo: el catálogo (títulos y ejemplares), los prestatarios y los préstamos se crean desde cero mediante entrada manual en el sistema. Se asume una carga inicial del fondo hecha a mano por el personal.
@@ -258,7 +298,9 @@ El personal de la biblioteca define el plazo de préstamo (en días naturales) y
 - Los datos mínimos de la persona prestataria son documento y nombre; el contacto es opcional. Una persona se identifica de forma unívoca por su documento.
 - La conservación de datos personales se rige por RGPD/LOPD: los datos identificativos de prestatarios se anonimizan a los 2 años del último préstamo (o antes, a petición), y los registros de préstamo se conservan de forma anonimizada con fines estadísticos y de trazabilidad del ejemplar.
 - Las personas con préstamos vencidos pueden seguir tomando prestados ejemplares mientras no superen el tope de préstamos activos; el sistema muestra un aviso de los vencidos, pero el bloqueo solo se aplica por cantidad (FR-033), no por retraso.
-- El sistema se usa en puestos de trabajo compartidos sin inicio de sesión individual; no hay control de acceso por usuario ni por rol dentro del sistema. El acceso al equipo y la asignación de tareas del personal se gestionan fuera del sistema.
+- El acceso requiere autenticación. La biblioteca se da de alta como cuenta central (con correo); las personas del personal usan subcuentas de operador creadas desde ella (sin correo). Un mismo puesto puede usarlo cualquier operador iniciando sesión con su subcuenta.
+- Se asume, salvo indicación contraria, un único tipo de subcuenta de operador con los mismos permisos operativos; solo la cuenta central gestiona subcuentas y configuración. (Ajustable si se necesitan más niveles de permiso.)
+- Cada operador es responsable de cerrar su sesión al dejar el puesto; el sistema puede cerrar sesión automáticamente tras un periodo de inactividad (valor a fijar en el plan).
 - La biblioteca opera en una única sede; no hay gestión multi-sucursal ni traslados de ejemplares entre sedes.
-- El volumen esperado es del orden de decenas de miles de títulos y ejemplares y de cientos de préstamos activos simultáneos.
-- Los parámetros de préstamo (plazo y máximo por persona) son un único juego de valores global; cambiarlos es una tarea de administración que el sistema no restringe por rol.
+- El volumen esperado es del orden de decenas de miles de títulos y ejemplares y de cientos de préstamos activos simultáneos, con unas pocas subcuentas de operador.
+- Los parámetros de préstamo (plazo y máximo por persona) son un único juego de valores global por biblioteca; solo la cuenta central puede cambiarlos.
