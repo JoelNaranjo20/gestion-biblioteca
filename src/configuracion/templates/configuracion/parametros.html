@@ -1,0 +1,14 @@
+{% extends "common/base.html" %}
+{% block titulo %}Configuración de préstamo{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:480px">
+    <h1>Parámetros de préstamo</h1>
+    <p>Los cambios solo afectan a los préstamos registrados a partir de ahora.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form.as_p }}
+      <p><button class="btn" type="submit">Guardar</button></p>
+    </form>
+  </div>
+{% endblock %}

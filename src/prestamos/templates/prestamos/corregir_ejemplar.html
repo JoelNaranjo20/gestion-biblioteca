@@ -1,0 +1,18 @@
+{% extends "common/base.html" %}
+{% block titulo %}Corregir ejemplar{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:520px">
+    <h1>Corregir ejemplar del préstamo</h1>
+    <p>Se anulará el préstamo del ejemplar <strong>{{ p.ejemplar.codigo }}</strong> y se registrará
+       uno nuevo con el ejemplar correcto para la misma persona.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form.as_p }}
+      <p>
+        <button class="btn" type="submit">Corregir</button>
+        <a class="btn secundario" href="{% url 'prestamos:detalle' p.pk %}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

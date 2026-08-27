@@ -1,0 +1,19 @@
+{% extends "common/base.html" %}
+{% block titulo %}{% if anular %}Anular retirada{% else %}Retirar ejemplar{% endif %}{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:520px">
+    <h1>{% if anular %}Anular retirada de{% else %}Retirar{% endif %} {{ ejemplar.codigo }}</h1>
+    <p>{{ ejemplar.titulo }}</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form.as_p }}
+      <p>
+        <button class="btn {% if not anular %}peligro{% endif %}" type="submit">
+          {% if anular %}Anular retirada{% else %}Retirar{% endif %}
+        </button>
+        <a class="btn secundario" href="{% url 'catalogo:titulo_detalle' ejemplar.titulo_id %}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

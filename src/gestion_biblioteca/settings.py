@@ -6,6 +6,7 @@ Stack fijado en specs/001-catalog-loans/tech-stack.md.
 
 from __future__ import annotations
 
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -23,7 +24,9 @@ env = environ.Env(
 environ.Env.read_env(BASE_DIR / ".env")
 
 APP_ENTORNO = env("APP_ENTORNO", default="dev")
-ES_TEST = APP_ENTORNO == "test"
+# Detección robusta del entorno de pruebas (aunque no se exporte APP_ENTORNO).
+ES_TEST = APP_ENTORNO == "test" or "pytest" in sys.modules
+ES_DESKTOP = APP_ENTORNO == "desktop" and not ES_TEST
 ES_DESKTOP = APP_ENTORNO == "desktop"
 
 SECRET_KEY = env("SECRET_KEY", default="dev-insecure-key-no-usar-en-produccion")
@@ -163,6 +166,9 @@ STORAGES = {
         )
     },
 }
+# En dev/test se sirven los estáticos desde los finders (sin `collectstatic`).
+WHITENOISE_USE_FINDERS = DEBUG or ES_TEST
+WHITENOISE_AUTOREFRESH = DEBUG or ES_TEST
 
 # --- crispy-forms ---
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

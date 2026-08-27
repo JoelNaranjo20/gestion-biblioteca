@@ -1,0 +1,17 @@
+{% extends "common/base.html" %}
+{% block titulo %}Privacidad / RGPD{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Privacidad y retención de datos</h1>
+    <p>Los datos identificativos de los prestatarios se anonimizan automáticamente a los
+       2 años del último préstamo (sin préstamos activos). Los registros de préstamo se
+       conservan de forma anonimizada.</p>
+    <p><strong>{{ n_anonimizables }}</strong> persona(s) cumplen ahora mismo la ventana de retención.</p>
+    <form method="post" action="{% url 'privacidad:ejecutar_ahora' %}">
+      {% csrf_token %}
+      <button class="btn" type="submit">Ejecutar anonimización ahora</button>
+    </form>
+    <p style="margin-top:1rem;font-size:.9rem">Programa <code>manage.exe anonimizar_prestatarios</code>
+       a diario en el Programador de tareas de Windows para la ejecución desatendida.</p>
+  </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "common/base.html" %}
+{% block titulo %}Historial por persona{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Historial de préstamos por persona</h1>
+    <form method="get">
+      <label for="documento">Documento</label>
+      <input type="text" name="documento" id="documento" value="{{ documento }}">
+      <button class="btn" type="submit">Buscar</button>
+    </form>
+  </div>
+  {% if prestamos is not None %}
+  <div class="card">
+    {% if prestamos %}
+      <table>
+        <thead><tr><th>Ejemplar</th><th>Título</th><th>Préstamo</th><th>Límite</th><th>Estado</th></tr></thead>
+        <tbody>
+          {% for p in prestamos %}
+          <tr>
+            <td>{{ p.ejemplar.codigo }}</td>
+            <td>{{ p.ejemplar.titulo.titulo }}</td>
+            <td>{{ p.fecha_prestamo|date:"d/m/Y" }}</td>
+            <td>{{ p.fecha_limite|date:"d/m/Y" }}</td>
+            <td>{{ p.etiqueta_estado }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Sin resultados (la persona no existe o está anonimizada).</p>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endblock %}

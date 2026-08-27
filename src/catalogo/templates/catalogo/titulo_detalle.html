@@ -1,0 +1,42 @@
+{% extends "common/base.html" %}
+{% block titulo %}{{ titulo.titulo }}{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>{{ titulo.titulo }}</h1>
+    <p><strong>Autor:</strong> {{ titulo.autor }}
+       {% if titulo.isbn %}· <strong>ISBN:</strong> {{ titulo.isbn }}{% endif %}
+       {% if titulo.editorial %}· {{ titulo.editorial }}{% endif %}
+       {% if titulo.anio %}· {{ titulo.anio }}{% endif %}
+       {% if titulo.materia %}· <em>{{ titulo.materia }}</em>{% endif %}</p>
+    <p><strong>{{ titulo.n_total }}</strong> ejemplares · <strong>{{ titulo.n_disponibles }}</strong> disponibles</p>
+    <p>
+      <a class="btn secundario" href="{% url 'catalogo:titulo_editar' titulo.pk %}">Editar título</a>
+      <a class="btn" href="{% url 'catalogo:ejemplar_nuevo' titulo.pk %}">Añadir ejemplar</a>
+    </p>
+  </div>
+  <div class="card">
+    <h2>Ejemplares</h2>
+    <table>
+      <thead><tr><th>Código</th><th>Estado</th><th>Ubicación</th><th></th></tr></thead>
+      <tbody>
+        {% for ej in ejemplares %}
+        <tr>
+          <td>{{ ej.codigo }}</td>
+          <td>{{ ej.get_estado_display }}{% if ej.esta_retirado %} — {{ ej.motivo_retirada }}{% endif %}</td>
+          <td>{{ ej.ubicacion|default:"—" }}</td>
+          <td>
+            <a href="{% url 'catalogo:ejemplar_historial' ej.pk %}">Historial</a>
+            {% if ej.esta_disponible %}
+              · <a href="{% url 'catalogo:ejemplar_retirar' ej.pk %}">Retirar</a>
+            {% elif ej.esta_retirado %}
+              · <a href="{% url 'catalogo:ejemplar_anular_retirada' ej.pk %}">Anular retirada</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Sin ejemplares. Añade el primero.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -72,18 +72,18 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 ### Tests for User Story 1
 
 - [ ] T025 [P] [US1] Tests de contrato de `/catalogo/titulos/*` y `/catalogo/ejemplares/*` en `tests/contract/test_catalogo.py`
-- [ ] T026 [P] [US1] Test de integración del ciclo de catálogo (alta título+ejemplar, edición, retirada, recuentos) en `tests/integration/test_us1_catalogo.py`
+- [X] T026 [P] [US1] Test de integración del ciclo de catálogo (alta título+ejemplar, edición, retirada, recuentos) en `tests/integration/test_us1_catalogo.py`
 
 ### Implementation for User Story 1
 
-- [ ] T027 [P] [US1] Modelo `Titulo` (título*, autor*, isbn, editorial, anio, materia; columna generada `busqueda_norm` con `immutable_unaccent`; índice GIN `gin_trgm_ops`; índice btree en `isbn`) en `src/catalogo/models.py` + migración
-- [ ] T028 [P] [US1] Modelo `Ejemplar` (`codigo` único, `estado` enum disponible/prestado/retirado, `motivo_retirada`, `ubicacion` opcional; índice `(titulo, estado)`) en `src/catalogo/models.py` + migración
-- [ ] T029 [P] [US1] Factories de `Titulo` y `Ejemplar` en `tests/factories.py`
-- [ ] T030 [US1] Servicios de catálogo en `src/catalogo/services.py`: `crear_titulo`/`editar_titulo` (validan título+autor; avisan de ISBN duplicado y continúan tras confirmación), `crear_ejemplar` (rechaza código duplicado), `retirar_ejemplar` (bloquea si `prestado`), anotación de recuento total/disponibles
-- [ ] T031 [US1] Guard de borrado: impedir eliminar `Titulo`/`Ejemplar` con préstamos registrados (FR-007) en `src/catalogo/services.py`
-- [ ] T032 [US1] Vistas de título (`nuevo`, `editar`, `detalle` con lista de ejemplares y totales/disponibles) y de ejemplar (`añadir`, `retirar` con motivo) en `src/catalogo/views.py` + `src/catalogo/urls.py`
-- [ ] T033 [P] [US1] Plantillas: formulario de título, detalle de título con ejemplares, modal de retirada (Bootstrap/crispy) en `src/catalogo/templates/catalogo/`
-- [ ] T034 [US1] Registrar auditoría de escrituras de catálogo (`alta_titulo`, `edicion_titulo`, `alta_ejemplar`, `retirada_ejemplar`) vía `ConAuditoria`
+- [X] T027 [P] [US1] Modelo `Titulo` (título*, autor*, isbn, editorial, anio, materia; columna generada `busqueda_norm` con `immutable_unaccent`; índice GIN `gin_trgm_ops`; índice btree en `isbn`) en `src/catalogo/models.py` + migración
+- [X] T028 [P] [US1] Modelo `Ejemplar` (`codigo` único, `estado` enum disponible/prestado/retirado, `motivo_retirada`, `ubicacion` opcional; índice `(titulo, estado)`) en `src/catalogo/models.py` + migración
+- [X] T029 [P] [US1] Factories de `Titulo` y `Ejemplar` en `tests/factories.py`
+- [X] T030 [US1] Servicios de catálogo en `src/catalogo/services.py`: `crear_titulo`/`editar_titulo` (validan título+autor; avisan de ISBN duplicado y continúan tras confirmación), `crear_ejemplar` (rechaza código duplicado), `retirar_ejemplar` (bloquea si `prestado`), anotación de recuento total/disponibles
+- [X] T031 [US1] Guard de borrado: impedir eliminar `Titulo`/`Ejemplar` con préstamos registrados (FR-007) en `src/catalogo/services.py`
+- [X] T032 [US1] Vistas de título (`nuevo`, `editar`, `detalle` con lista de ejemplares y totales/disponibles) y de ejemplar (`añadir`, `retirar` con motivo) en `src/catalogo/views.py` + `src/catalogo/urls.py`
+- [X] T033 [P] [US1] Plantillas: formulario de título, detalle de título con ejemplares, modal de retirada (Bootstrap/crispy) en `src/catalogo/templates/catalogo/`
+- [X] T034 [US1] Registrar auditoría de escrituras de catálogo (`alta_titulo`, `edicion_titulo`, `alta_ejemplar`, `retirada_ejemplar`) vía `ConAuditoria`
 
 **Checkpoint**: US1 funcional y testeable de forma independiente
 
@@ -98,22 +98,22 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 ### Tests for User Story 2
 
 - [ ] T035 [P] [US2] Tests de contrato de `/prestamos/nuevo`, `/prestamos/devolver`, `/prestamos/<id>/anular`, `/prestamos/<id>/anular-devolucion`, `/prestamos/<id>/corregir-ejemplar`, `/catalogo/ejemplares/<id>/anular-retirada` en `tests/contract/test_prestamos.py`
-- [ ] T036 [P] [US2] Tests de integración: préstamo→devolución, devolución con retraso, bloqueo por tope, anular préstamo/devolución/retirada, corrección de ejemplar equivocado en `tests/integration/test_us2_prestamos.py`
-- [ ] T037 [P] [US2] Test de concurrencia (`TransactionTestCase`): dos préstamos simultáneos del mismo ejemplar → exactamente uno tiene éxito, sin dos préstamos activos, en `tests/integration/test_us2_concurrencia.py`
+- [X] T036 [P] [US2] Tests de integración: préstamo→devolución, devolución con retraso, bloqueo por tope, anular préstamo/devolución/retirada, corrección de ejemplar equivocado en `tests/integration/test_us2_prestamos.py`
+- [X] T037 [P] [US2] Test de concurrencia (`TransactionTestCase`): dos préstamos simultáneos del mismo ejemplar → exactamente uno tiene éxito, sin dos préstamos activos, en `tests/integration/test_us2_concurrencia.py`
 
 ### Implementation for User Story 2
 
-- [ ] T038 [P] [US2] Modelo `PersonaPrestataria` (documento, nombre, contacto, `estado` activa/anonimizada, `fecha_alta`, `fecha_ultimo_prestamo`; índice único parcial `(biblioteca, documento) WHERE estado='activa'`) en `src/prestamos/models.py` + migración
-- [ ] T039 [P] [US2] Modelo `Prestamo` (FKs ejemplar/persona nullable, `persona_anonimizada`, fechas, `dias_retraso`, `estado_registro` efectivo/anulado, `registrado_por`/`devolucion_registrada_por`; **índice único parcial** `(ejemplar) WHERE estado_registro='efectivo' AND fecha_devolucion_real IS NULL`; índices para historial y lista de vencidos) en `src/prestamos/models.py` + migración
-- [ ] T040 [P] [US2] Modelo `CorreccionOperacion` (tipo, operación, FK prestamo/ejemplar, motivo*, `realizada_por`, `fecha_hora`) en `src/prestamos/models.py` + migración
-- [ ] T041 [P] [US2] Reglas de dominio puras en `src/prestamos/rules.py`: `calcular_fecha_limite`, `calcular_dias_retraso`, `cuenta_prestamos_activos`, `valida_tope`; tests en `tests/unit/test_reglas_prestamo.py`
-- [ ] T042 [US2] Servicio `registrar_prestamo` en `src/prestamos/services.py`: `select_for_update` sobre `Ejemplar`, verificación `disponible` + tope, get-or-create de `PersonaPrestataria` por documento, aviso de nombre distinto (FR-022), aviso no bloqueante de vencidos (FR-021)
-- [ ] T043 [US2] Servicio `registrar_devolucion` en `src/prestamos/services.py`: localizar préstamo activo por código o id, fijar `fecha_devolucion_real`, calcular `dias_retraso`, ejemplar → `disponible`
-- [ ] T044 [US2] Servicios de corrección en `src/prestamos/services.py`: `anular_prestamo`, `anular_devolucion`, `corregir_ejemplar`, `anular_retirada` (motivo obligatorio; recálculo de estado del ejemplar, datos derivados y recuento por persona; FR-040)
-- [ ] T045 [US2] Vistas de préstamo y devolución (`/prestamos/nuevo`, `/prestamos/devolver`) con selección por código o desde la búsqueda y flujos de confirmación (nombre distinto / avisos) en `src/prestamos/views.py` + `src/prestamos/urls.py`
-- [ ] T046 [US2] Vistas de corrección (`anular`, `anular-devolucion`, `corregir-ejemplar`, `anular-retirada`) con motivo obligatorio en `src/prestamos/views.py` + `src/prestamos/urls.py`
-- [ ] T047 [P] [US2] Plantillas: formulario de préstamo (lectura de código + datos de persona + avisos), formulario de devolución, modales de corrección en `src/prestamos/templates/prestamos/`
-- [ ] T048 [US2] Registrar auditoría de `prestamo`, `devolucion` y `correccion` vía `ConAuditoria`
+- [X] T038 [P] [US2] Modelo `PersonaPrestataria` (documento, nombre, contacto, `estado` activa/anonimizada, `fecha_alta`, `fecha_ultimo_prestamo`; índice único parcial `(biblioteca, documento) WHERE estado='activa'`) en `src/prestamos/models.py` + migración
+- [X] T039 [P] [US2] Modelo `Prestamo` (FKs ejemplar/persona nullable, `persona_anonimizada`, fechas, `dias_retraso`, `estado_registro` efectivo/anulado, `registrado_por`/`devolucion_registrada_por`; **índice único parcial** `(ejemplar) WHERE estado_registro='efectivo' AND fecha_devolucion_real IS NULL`; índices para historial y lista de vencidos) en `src/prestamos/models.py` + migración
+- [X] T040 [P] [US2] Modelo `CorreccionOperacion` (tipo, operación, FK prestamo/ejemplar, motivo*, `realizada_por`, `fecha_hora`) en `src/prestamos/models.py` + migración
+- [X] T041 [P] [US2] Reglas de dominio puras en `src/prestamos/rules.py`: `calcular_fecha_limite`, `calcular_dias_retraso`, `cuenta_prestamos_activos`, `valida_tope`; tests en `tests/unit/test_reglas_prestamo.py`
+- [X] T042 [US2] Servicio `registrar_prestamo` en `src/prestamos/services.py`: `select_for_update` sobre `Ejemplar`, verificación `disponible` + tope, get-or-create de `PersonaPrestataria` por documento, aviso de nombre distinto (FR-022), aviso no bloqueante de vencidos (FR-021)
+- [X] T043 [US2] Servicio `registrar_devolucion` en `src/prestamos/services.py`: localizar préstamo activo por código o id, fijar `fecha_devolucion_real`, calcular `dias_retraso`, ejemplar → `disponible`
+- [X] T044 [US2] Servicios de corrección en `src/prestamos/services.py`: `anular_prestamo`, `anular_devolucion`, `corregir_ejemplar`, `anular_retirada` (motivo obligatorio; recálculo de estado del ejemplar, datos derivados y recuento por persona; FR-040)
+- [X] T045 [US2] Vistas de préstamo y devolución (`/prestamos/nuevo`, `/prestamos/devolver`) con selección por código o desde la búsqueda y flujos de confirmación (nombre distinto / avisos) en `src/prestamos/views.py` + `src/prestamos/urls.py`
+- [X] T046 [US2] Vistas de corrección (`anular`, `anular-devolucion`, `corregir-ejemplar`, `anular-retirada`) con motivo obligatorio en `src/prestamos/views.py` + `src/prestamos/urls.py`
+- [X] T047 [P] [US2] Plantillas: formulario de préstamo (lectura de código + datos de persona + avisos), formulario de devolución, modales de corrección en `src/prestamos/templates/prestamos/`
+- [X] T048 [US2] Registrar auditoría de `prestamo`, `devolucion` y `correccion` vía `ConAuditoria`
 
 **Checkpoint**: US2 funcional — **MVP = Setup + Foundational + US1 + US2** (con acceso sembrado por management command)
 
@@ -154,10 +154,10 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Implementation for User Story 3
 
-- [ ] T057 [US3] Servicio de búsqueda en `src/catalogo/services.py`: trigram/`unaccent` sobre `busqueda_norm`, ISBN exacto normalizado (sin guiones), paginación 25, anotaciones de total/disponibles
-- [ ] T058 [US3] Vistas `/catalogo/buscar/` (HTML paginado), `/catalogo/buscar.json` (autocompletar ≤ 10) y `/catalogo/ejemplar-por-codigo.json` (404 si no existe) en `src/catalogo/views.py` + `src/catalogo/urls.py`
-- [ ] T059 [P] [US3] Plantillas + HTMX: formulario de búsqueda, parcial de resultados con auto-refresco al teclear, mensaje "sin resultados" en `src/catalogo/templates/catalogo/`
-- [ ] T060 [P] [US3] Vista y plantilla `/catalogo/ejemplares/<id>/historial/` (incluye operaciones anuladas) en `src/catalogo/`
+- [X] T057 [US3] Servicio de búsqueda en `src/catalogo/services.py`: trigram/`unaccent` sobre `busqueda_norm`, ISBN exacto normalizado (sin guiones), paginación 25, anotaciones de total/disponibles
+- [X] T058 [US3] Vistas `/catalogo/buscar/` (HTML paginado), `/catalogo/buscar.json` (autocompletar ≤ 10) y `/catalogo/ejemplar-por-codigo.json` (404 si no existe) en `src/catalogo/views.py` + `src/catalogo/urls.py`
+- [X] T059 [P] [US3] Plantillas + HTMX: formulario de búsqueda, parcial de resultados con auto-refresco al teclear, mensaje "sin resultados" en `src/catalogo/templates/catalogo/`
+- [X] T060 [P] [US3] Vista y plantilla `/catalogo/ejemplares/<id>/historial/` (incluye operaciones anuladas) en `src/catalogo/`
 
 **Checkpoint**: US1, US2, US3 y US6 funcionan de forma independiente
 
@@ -176,12 +176,12 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Implementation for User Story 4
 
-- [ ] T063 [P] [US4] Modelo `GestionReclamacion` (FK prestamo, fecha, `medio` enum, notas, `registrada_por`) en `src/prestamos/models.py` + migración
-- [ ] T064 [US4] Servicios de consulta en `src/prestamos/services.py`: `prestamos_activos` (con retraso calculado y última gestión), `prestamos_vencidos`, `historial_ejemplar`, `historial_persona` (vacío si la persona está anonimizada)
-- [ ] T065 [US4] Servicio de reclamación en `src/prestamos/services.py`: solo préstamo activo y vencido; aviso si la persona no tiene contacto; bloqueo si el préstamo está cerrado
-- [ ] T066 [US4] Vistas `/prestamos/activos`, `/prestamos/vencidos`, `/prestamos/<id>/` (detalle con gestiones y correcciones), `/prestamos/<id>/reclamaciones/nueva`, `/personas/historial` en `src/prestamos/views.py` + `src/prestamos/urls.py`
-- [ ] T067 [P] [US4] Plantillas: listas de activos/vencidos (destacado de vencidos + última gestión), detalle de préstamo, formulario de reclamación (HTMX), historial de persona en `src/prestamos/templates/prestamos/`
-- [ ] T068 [US4] Registrar auditoría de `reclamacion` vía `ConAuditoria`
+- [X] T063 [P] [US4] Modelo `GestionReclamacion` (FK prestamo, fecha, `medio` enum, notas, `registrada_por`) en `src/prestamos/models.py` + migración
+- [X] T064 [US4] Servicios de consulta en `src/prestamos/services.py`: `prestamos_activos` (con retraso calculado y última gestión), `prestamos_vencidos`, `historial_ejemplar`, `historial_persona` (vacío si la persona está anonimizada)
+- [X] T065 [US4] Servicio de reclamación en `src/prestamos/services.py`: solo préstamo activo y vencido; aviso si la persona no tiene contacto; bloqueo si el préstamo está cerrado
+- [X] T066 [US4] Vistas `/prestamos/activos`, `/prestamos/vencidos`, `/prestamos/<id>/` (detalle con gestiones y correcciones), `/prestamos/<id>/reclamaciones/nueva`, `/personas/historial` en `src/prestamos/views.py` + `src/prestamos/urls.py`
+- [X] T067 [P] [US4] Plantillas: listas de activos/vencidos (destacado de vencidos + última gestión), detalle de préstamo, formulario de reclamación (HTMX), historial de persona en `src/prestamos/templates/prestamos/`
+- [X] T068 [US4] Registrar auditoría de `reclamacion` vía `ConAuditoria`
 
 **Checkpoint**: todas las historias P1 y P2 funcionan de forma independiente
 
@@ -196,13 +196,13 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 ### Tests for User Story 5
 
 - [ ] T069 [P] [US5] Test de contrato de `/configuracion/prestamos/` (GET/POST; 403 para operador) en `tests/contract/test_configuracion.py`
-- [ ] T070 [P] [US5] Test de integración: el cambio de plazo solo afecta a préstamos nuevos; el cambio de tope afecta a la validación; valores inválidos rechazados, en `tests/integration/test_us5_configuracion.py`
+- [X] T070 [P] [US5] Test de integración: el cambio de plazo solo afecta a préstamos nuevos; el cambio de tope afecta a la validación; valores inválidos rechazados, en `tests/integration/test_us5_configuracion.py`
 
 ### Implementation for User Story 5
 
-- [ ] T071 [US5] Formulario y servicio de configuración (validación mínimo 1) y vista `/configuracion/prestamos/` protegida por `SoloCentralMixin` en `src/configuracion/views.py` + `src/configuracion/urls.py`
-- [ ] T072 [P] [US5] Plantilla del formulario de configuración en `src/configuracion/templates/configuracion/`
-- [ ] T073 [US5] Verificar que `registrar_prestamo`/`valida_tope` leen siempre `ParametrosPrestamo` vigente; registrar auditoría `cambio_configuracion`
+- [X] T071 [US5] Formulario y servicio de configuración (validación mínimo 1) y vista `/configuracion/prestamos/` protegida por `SoloCentralMixin` en `src/configuracion/views.py` + `src/configuracion/urls.py`
+- [X] T072 [P] [US5] Plantilla del formulario de configuración en `src/configuracion/templates/configuracion/`
+- [X] T073 [US5] Verificar que `registrar_prestamo`/`valida_tope` leen siempre `ParametrosPrestamo` vigente; registrar auditoría `cambio_configuracion`
 
 **Checkpoint**: todas las historias de usuario completas
 
@@ -214,14 +214,14 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 ### Privacidad y retención (RGPD/LOPD — FR-034…FR-037)
 
-- [ ] T074 [P] Servicios de anonimización en `src/privacidad/services.py`: `anonimizar_persona(persona)` y `anonimizar_vencidas()` (desligar `Prestamo.persona`, vaciar documento/nombre/contacto, `estado='anonimizada'`, bloquear si hay préstamos activos)
-- [ ] T075 Management command `anonimizar_prestatarios` (idempotente; escribe `EntradaAuditoria` `anonimizacion_automatica`) en `src/privacidad/management/commands/anonimizar_prestatarios.py`
-- [ ] T076 [P] Vistas `/privacidad/` (estado: anonimizables hoy, última/próxima ejecución), `/privacidad/ejecutar-ahora/` y `/personas/<id>/anonimizar/` (SoloCentralMixin; 409 si hay préstamos activos) + plantillas en `src/privacidad/`
-- [ ] T077 [P] Test de integración de anonimización (ventana de 2 años, bloqueo FR-036, conservación del historial FR-037, historial de persona vacío tras anonimizar) en `tests/integration/test_privacidad.py`
+- [X] T074 [P] Servicios de anonimización en `src/privacidad/services.py`: `anonimizar_persona(persona)` y `anonimizar_vencidas()` (desligar `Prestamo.persona`, vaciar documento/nombre/contacto, `estado='anonimizada'`, bloquear si hay préstamos activos)
+- [X] T075 Management command `anonimizar_prestatarios` (idempotente; escribe `EntradaAuditoria` `anonimizacion_automatica`) en `src/privacidad/management/commands/anonimizar_prestatarios.py`
+- [X] T076 [P] Vistas `/privacidad/` (estado: anonimizables hoy, última/próxima ejecución), `/privacidad/ejecutar-ahora/` y `/personas/<id>/anonimizar/` (SoloCentralMixin; 409 si hay préstamos activos) + plantillas en `src/privacidad/`
+- [X] T077 [P] Test de integración de anonimización (ventana de 2 años, bloqueo FR-036, conservación del historial FR-037, historial de persona vacío tras anonimizar) en `tests/integration/test_privacidad.py`
 
 ### Rendimiento, empaquetado y seguridad
 
-- [ ] T078 [P] Tests unitarios de reglas de dominio (fecha límite, días de retraso, tope, normalización de texto, ventana de retención) en `tests/unit/`
+- [X] T078 [P] Tests unitarios de reglas de dominio (fecha límite, días de retraso, tope, normalización de texto, ventana de retención) en `tests/unit/`
 - [ ] T079 Management command `sembrar_datos_demo` (20.000 títulos / 50.000 ejemplares) en `src/catalogo/management/commands/` y verificación de que la búsqueda responde < 2 s (SC-003) y la disponibilidad se refleja < 2 s (SC-007); revisar `select_related`/`prefetch_related` y los índices
 - [ ] T080 [P] Finalizar el empaquetado de escritorio: comprobación del runtime WebView2 con mensaje amable, `migrate` en el primer arranque, icono de la app; documentar la opción MSI en `docs/`
 - [ ] T081 [P] Repaso de seguridad: `ALLOWED_HOSTS`, `DEBUG=False` en `desktop`, configuración de django-axes, gestión de `SECRET_KEY`, `.env.example` completo

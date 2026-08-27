@@ -1,0 +1,54 @@
+{% extends "common/base.html" %}
+{% block titulo %}Préstamo #{{ p.pk }}{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Préstamo de {{ p.ejemplar.codigo }}</h1>
+    <p>{{ p.ejemplar.titulo.titulo }} — {{ p.ejemplar.titulo.autor }}</p>
+    <p>
+      <strong>Persona:</strong>
+      {% if p.persona_anonimizada %}(anonimizada){% elif p.persona %}{{ p.persona.nombre }} ({{ p.persona.documento }}){% else %}—{% endif %}<br>
+      <strong>Préstamo:</strong> {{ p.fecha_prestamo|date:"d/m/Y" }} ·
+      <strong>Límite:</strong> {{ p.fecha_limite|date:"d/m/Y" }} ·
+      <strong>Devolución:</strong> {{ p.fecha_devolucion_real|date:"d/m/Y"|default:"—" }}<br>
+      <strong>Estado:</strong> {{ p.etiqueta_estado }}
+      {% if p.dias_retraso %} ({{ p.dias_retraso }} días de retraso){% endif %}<br>
+      <strong>Registrado por:</strong> {{ p.registrado_por.get_username }}
+    </p>
+    <p>
+      {% if p.activo %}
+        <a class="btn secundario" href="{% url 'prestamos:anular' p.pk %}">Anular préstamo</a>
+        <a class="btn secundario" href="{% url 'prestamos:corregir_ejemplar' p.pk %}">Corregir ejemplar</a>
+        {% if p.esta_vencido %}
+          <a class="btn" href="{% url 'prestamos:reclamacion_nueva' p.pk %}">Registrar reclamación</a>
+        {% endif %}
+      {% elif p.fecha_devolucion_real %}
+        <a class="btn secundario" href="{% url 'prestamos:anular_devolucion' p.pk %}">Anular devolución</a>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Gestiones de reclamación</h2>
+    <table>
+      <thead><tr><th>Fecha</th><th>Medio</th><th>Notas</th><th>Operador</th></tr></thead>
+      <tbody>
+        {% for g in reclamaciones %}
+        <tr><td>{{ g.fecha|date:"d/m/Y" }}</td><td>{{ g.get_medio_display }}</td>
+            <td>{{ g.notas|default:"—" }}</td><td>{{ g.registrada_por.get_username }}</td></tr>
+        {% empty %}<tr><td colspan="4">Sin gestiones.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if correcciones %}
+  <div class="card">
+    <h2>Correcciones</h2>
+    <ul>
+      {% for c in correcciones %}
+        <li>{{ c.fecha_hora|date:"d/m/Y H:i" }} — {{ c.get_tipo_display }} de {{ c.get_operacion_display }}:
+            {{ c.motivo }} ({{ c.realizada_por.get_username }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+{% endblock %}

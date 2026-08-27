@@ -51,4 +51,13 @@ manage.exe anonimizar_prestatarios
 
 ## Estado de la implementación
 
-Ver los checkboxes de [`specs/001-catalog-loans/tasks.md`](specs/001-catalog-loans/tasks.md).
+**69/83 tareas** completadas (ver [`specs/001-catalog-loans/tasks.md`](specs/001-catalog-loans/tasks.md)).
+
+- ✅ Setup + Foundational, US1 (catálogo), US2 (préstamos/devoluciones/correcciones),
+  US3 (búsqueda), US4 (activos/vencidos/historial/reclamación), US5 (configuración),
+  US6 (cuentas y operadores), anonimización RGPD (servicio + comando + panel).
+- ✅ 36 pruebas en verde (unitarias + integración + concurrencia) contra PostgreSQL 16;
+  `ruff` limpio; `manage.py check` sin incidencias; migraciones aplican.
+- ⏳ Pendiente: vendorizar assets HTMX/Bootstrap (hoy hay un CSS propio de respaldo),
+  pruebas de contrato por endpoint, comando `sembrar_datos_demo` + medición de rendimiento,
+  finalización del empaquetado (WebView2, icono), repaso de seguridad y validación E1–E11.

@@ -1,0 +1,22 @@
+{% extends "common/base.html" %}
+{% block titulo %}Nuevo préstamo{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:560px">
+    <h1>Registrar préstamo</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+      <label for="id_codigo">Código de ejemplar</label>
+      <input type="text" name="codigo" id="id_codigo" value="{{ form.codigo.value|default:'' }}" autofocus>
+      {{ form.codigo.errors }}
+      <label for="id_documento">Documento de la persona</label>
+      <input type="text" name="documento" id="id_documento" value="{{ form.documento.value|default:'' }}">
+      <label for="id_nombre">Nombre de la persona</label>
+      <input type="text" name="nombre" id="id_nombre" value="{{ form.nombre.value|default:'' }}">
+      <label for="id_contacto">Contacto (opcional)</label>
+      <input type="text" name="contacto" id="id_contacto" value="{{ form.contacto.value|default:'' }}">
+      {% if form.confirmar_nombre.value %}<input type="hidden" name="confirmar_nombre" value="on">{% endif %}
+      <p style="margin-top:1rem"><button class="btn" type="submit">Registrar préstamo</button></p>
+    </form>
+  </div>
+{% endblock %}

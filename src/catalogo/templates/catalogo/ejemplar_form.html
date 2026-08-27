@@ -1,0 +1,15 @@
+{% extends "common/base.html" %}
+{% block titulo %}Añadir ejemplar{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:520px">
+    <h1>Añadir ejemplar a «{{ titulo.titulo }}»</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p>
+        <button class="btn" type="submit">Añadir</button>
+        <a class="btn secundario" href="{% url 'catalogo:titulo_detalle' titulo.pk %}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

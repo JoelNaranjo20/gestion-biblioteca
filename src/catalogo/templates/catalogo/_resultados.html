@@ -1,0 +1,28 @@
+{% if page is not None %}
+  <div class="card">
+    {% if page.paginator.count == 0 %}
+      <p>No se han encontrado títulos para «{{ q }}».</p>
+    {% else %}
+      <table>
+        <thead><tr><th>Título</th><th>Autor</th><th>Ejemplares</th><th>Disponibles</th></tr></thead>
+        <tbody>
+          {% for t in page %}
+          <tr>
+            <td><a href="{% url 'catalogo:titulo_detalle' t.pk %}">{{ t.titulo }}</a></td>
+            <td>{{ t.autor }}</td>
+            <td>{{ t.n_total }}</td>
+            <td>{{ t.n_disponibles }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if page.paginator.num_pages > 1 %}
+        <p>
+          {% if page.has_previous %}<a href="?q={{ q }}&campo={{ campo }}&pagina={{ page.previous_page_number }}">« Anterior</a>{% endif %}
+          Página {{ page.number }} de {{ page.paginator.num_pages }}
+          {% if page.has_next %}<a href="?q={{ q }}&campo={{ campo }}&pagina={{ page.next_page_number }}">Siguiente »</a>{% endif %}
+        </p>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endif %}

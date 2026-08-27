@@ -12,9 +12,16 @@
   <nav class="barra">
     <a href="{% url 'inicio' %}"><strong>Biblioteca Municipal</strong></a>
     {% if user.is_authenticated %}
+      <a href="{% url 'catalogo:buscar' %}">Buscar</a>
+      <a href="{% url 'prestamos:nuevo' %}">Prestar</a>
+      <a href="{% url 'prestamos:devolver' %}">Devolver</a>
+      <a href="{% url 'prestamos:activos' %}">Activos</a>
+      <a href="{% url 'prestamos:vencidos' %}">Vencidos</a>
       {% block nav_extra %}{% endblock %}
       {% if es_central %}
         <a href="{% url 'cuentas:operador_lista' %}">Operadores</a>
+        <a href="{% url 'configuracion:parametros' %}">Configuración</a>
+        <a href="{% url 'privacidad:panel' %}">RGPD</a>
       {% endif %}
       <a href="{% url 'cuentas:auditoria_lista' %}">Auditoría</a>
     {% endif %}

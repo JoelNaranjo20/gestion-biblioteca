@@ -1,0 +1,14 @@
+{% extends "common/base.html" %}
+{% block titulo %}Registrar devolución{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:480px">
+    <h1>Registrar devolución</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+      <label for="id_codigo">Código de ejemplar</label>
+      <input type="text" name="codigo" id="id_codigo" autofocus>
+      <p style="margin-top:1rem"><button class="btn" type="submit">Registrar devolución</button></p>
+    </form>
+  </div>
+{% endblock %}

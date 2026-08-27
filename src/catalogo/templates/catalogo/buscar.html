@@ -1,0 +1,23 @@
+{% extends "common/base.html" %}
+{% block titulo %}Buscar en el catálogo{% endblock %}
+{% block nav_extra %}<a href="{% url 'catalogo:titulo_nuevo' %}">Nuevo título</a>{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Buscar en el catálogo</h1>
+    <form method="get" hx-get="{% url 'catalogo:buscar' %}" hx-target="#resultados" hx-trigger="submit, keyup changed delay:400ms from:#q">
+      <div style="display:flex;gap:.5rem;align-items:end">
+        <div style="flex:1"><label for="q">Texto</label>
+          <input type="search" name="q" id="q" value="{{ q }}" autofocus></div>
+        <div><label for="campo">Campo</label>
+          <select name="campo" id="campo">
+            <option value="titulo" {% if campo == 'titulo' %}selected{% endif %}>Título</option>
+            <option value="autor" {% if campo == 'autor' %}selected{% endif %}>Autor</option>
+            <option value="isbn" {% if campo == 'isbn' %}selected{% endif %}>ISBN</option>
+            <option value="materia" {% if campo == 'materia' %}selected{% endif %}>Materia</option>
+          </select></div>
+        <button class="btn" type="submit">Buscar</button>
+      </div>
+    </form>
+  </div>
+  <div id="resultados">{% include "catalogo/_resultados.html" %}</div>
+{% endblock %}
