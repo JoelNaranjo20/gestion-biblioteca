@@ -24,3 +24,6 @@ htmlcov/
 
 # Claude Code (ajustes locales, pueden contener tokens)
 .claude/settings.local.json
+
+# Logs de la app
+/logs/

@@ -1,0 +1,30 @@
+{% extends "common/base.html" %}
+{% block titulo %}{% if restablecer %}Cambiar contraseña{% else %}Nuevo operador{% endif %}{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:480px">
+    <h1>{% if restablecer %}Cambiar contraseña de {{ operador.username }}{% else %}Nuevo operador{% endif %}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% if not restablecer %}
+        <label for="id_username">Nombre de usuario</label>
+        <input type="text" name="username" id="id_username" value="{{ form.username.value|default:'' }}"
+               hx-get="{% url 'cuentas:username_disponible' %}" hx-trigger="keyup changed delay:300ms"
+               hx-target="#chk-username" required>
+        <div id="chk-username"></div>
+        {{ form.username.errors }}
+        <label for="id_nombre_visible">Nombre visible (opcional)</label>
+        <input type="text" name="nombre_visible" id="id_nombre_visible" value="{{ form.nombre_visible.value|default:'' }}">
+      {% endif %}
+      <label for="id_password">Contraseña</label>
+      <input type="password" name="password" id="id_password" required>
+      {{ form.password.errors }}
+      <label for="id_password2">Repite la contraseña</label>
+      <input type="password" name="password2" id="id_password2" required>
+      {{ form.password2.errors }}
+      <p style="margin-top:1rem">
+        <button class="btn" type="submit">Guardar</button>
+        <a class="btn secundario" href="{% url 'cuentas:operador_lista' %}">Cancelar</a>
+      </p>
+    </form>
+  </div>
+{% endblock %}

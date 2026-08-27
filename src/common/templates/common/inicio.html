@@ -1,0 +1,18 @@
+{% extends "common/base.html" %}
+{% block titulo %}Inicio · Biblioteca Municipal{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Panel de mostrador</h1>
+    <p>Bienvenida/o, {{ operador_actual.etiqueta|default:user.get_username }}.</p>
+    <p>Módulos disponibles según avance la implementación (catálogo, préstamos, búsqueda…).</p>
+  </div>
+  {% if es_central %}
+  <div class="card">
+    <h2>Administración</h2>
+    <ul>
+      <li><a href="{% url 'cuentas:operador_lista' %}">Gestión de operadores</a></li>
+      <li><a href="{% url 'cuentas:auditoria_lista' %}">Auditoría</a></li>
+    </ul>
+  </div>
+  {% endif %}
+{% endblock %}

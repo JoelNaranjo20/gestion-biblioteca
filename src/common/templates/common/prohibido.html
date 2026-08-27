@@ -1,0 +1,9 @@
+{% extends "common/base.html" %}
+{% block titulo %}Acción no permitida{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Acción no permitida</h1>
+    <p>{{ detalle|default:"No tienes permiso para realizar esta acción." }}</p>
+    <p><a class="btn secundario" href="{% url 'inicio' %}">Volver al inicio</a></p>
+  </div>
+{% endblock %}

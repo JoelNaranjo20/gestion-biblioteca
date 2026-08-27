@@ -1,0 +1,10 @@
+{% extends "common/base.html" %}
+{% block titulo %}Sin conexión{% endblock %}
+{% block contenido %}
+  <div class="card">
+    <h1>Sin conexión con la base de datos</h1>
+    <p>No se puede contactar con la base de datos en la nube. <strong>No se pueden registrar
+    operaciones</strong> hasta recuperar la conexión.</p>
+    <p><a class="btn" href="{{ request.path }}">Reintentar</a></p>
+  </div>
+{% endblock %}

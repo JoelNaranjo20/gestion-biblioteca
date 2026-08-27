@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Biblioteca Municipal{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script defer src="{% static 'vendor/htmx.min.js' %}"></script>
+</head>
+<body>
+  <nav class="barra">
+    <a href="{% url 'inicio' %}"><strong>Biblioteca Municipal</strong></a>
+    {% if user.is_authenticated %}
+      {% block nav_extra %}{% endblock %}
+      {% if es_central %}
+        <a href="{% url 'cuentas:operador_lista' %}">Operadores</a>
+      {% endif %}
+      <a href="{% url 'cuentas:auditoria_lista' %}">Auditoría</a>
+    {% endif %}
+    <span class="sep"></span>
+    <span id="estado-conexion" class="estado-conexion"
+          hx-get="{% url 'ping_conexion' %}" hx-trigger="every 20s" hx-swap="none">conectado</span>
+    {% if user.is_authenticated %}
+      <span>{{ operador_actual.etiqueta|default:user.get_username }}</span>
+      <form method="post" action="{% url 'cuentas:salir' %}" style="display:inline">
+        {% csrf_token %}<button class="btn secundario" type="submit">Salir</button>
+      </form>
+    {% endif %}
+  </nav>
+
+  <main class="contenido">
+    {% if messages %}
+      {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+    {% endif %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <script>
+    document.body.addEventListener('htmx:afterRequest', function (e) {
+      if (e.detail.pathInfo && e.detail.pathInfo.requestPath &&
+          e.detail.pathInfo.requestPath.indexOf('conexion.json') !== -1) {
+        var s = document.getElementById('estado-conexion');
+        if (!s) return;
+        if (e.detail.successful) { s.textContent = 'conectado'; s.classList.remove('ko'); }
+        else { s.textContent = 'sin conexión'; s.classList.add('ko'); }
+      }
+    });
+  </script>
+</body>
+</html>

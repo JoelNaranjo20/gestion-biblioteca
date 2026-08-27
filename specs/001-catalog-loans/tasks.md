@@ -25,13 +25,13 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 **Purpose**: inicialización del proyecto y estructura base
 
-- [ ] T001 Crear la estructura del repo según plan.md: `manage.py`, `pyproject.toml`, `src/` con apps `common cuentas catalogo prestamos configuracion privacidad`, `desktop/`, `tests/{unit,integration,contract}/`
-- [ ] T002 Inicializar el proyecto Python con `uv`; declarar en `pyproject.toml` las dependencias de ejecución (django~=5.2, psycopg[binary]~=3.2, django-environ, whitenoise, waitress, pywebview, django-crispy-forms, crispy-bootstrap5, django-axes, argon2-cffi) y generar `uv.lock`
-- [ ] T003 [P] Configurar **ruff** (lint + formato) en `pyproject.toml` y `.pre-commit-config.yaml` con hooks: ruff, ruff-format, `manage.py check`, `makemigrations --check`
-- [ ] T004 [P] Configurar **pytest** en `pyproject.toml`/`pytest.ini`: pytest-django, pytest-cov, factory_boy, Faker; `DJANGO_SETTINGS_MODULE` de test y `--reuse-db`
-- [ ] T005 [P] Crear `.env.example` (DATABASE_URL, SECRET_KEY, DJANGO_DEBUG, APP_ENTORNO, SESSION_INACTIVIDAD_SEGUNDOS=1800, RETENCION_PRESTATARIOS_DIAS=730) y `src/gestion_biblioteca/settings.py` gobernado por `APP_ENTORNO` (dev/desktop/test) con `LANGUAGE_CODE='es'`, `TIME_ZONE='Europe/Madrid'`, `USE_TZ=True`
+- [X] T001 Crear la estructura del repo según plan.md: `manage.py`, `pyproject.toml`, `src/` con apps `common cuentas catalogo prestamos configuracion privacidad`, `desktop/`, `tests/{unit,integration,contract}/`
+- [X] T002 Inicializar el proyecto Python con `uv`; declarar en `pyproject.toml` las dependencias de ejecución (django~=5.2, psycopg[binary]~=3.2, django-environ, whitenoise, waitress, pywebview, django-crispy-forms, crispy-bootstrap5, django-axes, argon2-cffi) y generar `uv.lock`
+- [X] T003 [P] Configurar **ruff** (lint + formato) en `pyproject.toml` y `.pre-commit-config.yaml` con hooks: ruff, ruff-format, `manage.py check`, `makemigrations --check`
+- [X] T004 [P] Configurar **pytest** en `pyproject.toml`/`pytest.ini`: pytest-django, pytest-cov, factory_boy, Faker; `DJANGO_SETTINGS_MODULE` de test y `--reuse-db`
+- [X] T005 [P] Crear `.env.example` (DATABASE_URL, SECRET_KEY, DJANGO_DEBUG, APP_ENTORNO, SESSION_INACTIVIDAD_SEGUNDOS=1800, RETENCION_PRESTATARIOS_DIAS=730) y `src/gestion_biblioteca/settings.py` gobernado por `APP_ENTORNO` (dev/desktop/test) con `LANGUAGE_CODE='es'`, `TIME_ZONE='Europe/Madrid'`, `USE_TZ=True`
 - [ ] T006 [P] Vendorizar HTMX 2.x, Bootstrap 5.3 (CSS/JS) y Bootstrap Icons en `src/common/static/vendor/`; configurar whitenoise + `ManifestStaticFilesStorage` en settings
-- [ ] T007 Crear el proyecto Django `gestion_biblioteca` y registrar las 6 apps vacías en `INSTALLED_APPS`
+- [X] T007 Crear el proyecto Django `gestion_biblioteca` y registrar las 6 apps vacías en `INSTALLED_APPS`
 
 ---
 
@@ -41,23 +41,23 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 
 **⚠️ CRITICAL**: ninguna historia puede empezar hasta terminar esta fase
 
-- [ ] T008 Configurar la conexión a **Supabase (session pooler)** en settings: `DATABASE_URL` con `sslmode=require`, puerto 5432, `CONN_MAX_AGE=0`, driver psycopg 3; documentar en `.env.example`
-- [ ] T009 Crear la app `common`: modelo abstracto `ModeloBase` (id, `creado_en`, `actualizado_en`) en `src/common/models.py`
-- [ ] T010 [P] Migración inicial que habilita las extensiones PostgreSQL `unaccent` y `pg_trgm` (`CreateExtension`) y crea el wrapper SQL `immutable_unaccent` (IMMUTABLE) en `src/common/migrations/0001_extensiones.py`
-- [ ] T011 [P] Utilidades en `src/common/utils.py`: `normalizar_texto()` (lower + unaccent) y `sumar_dias_naturales(fecha, dias)`; tests en `tests/unit/test_utils.py`
-- [ ] T012 [P] Middleware de error de conexión (`OperationalError`/`InterfaceError` → página "sin conexión con la base de datos") en `src/common/middleware.py` + plantilla `src/common/templates/common/sin_conexion.html`
-- [ ] T013 [P] Configurar logging a fichero rotativo (`%LOCALAPPDATA%/BibliotecaMunicipal/logs/`) + consola en dev, en `src/gestion_biblioteca/settings.py`
-- [ ] T014 Crear `Biblioteca` (nombre, contacto, `creada_por_email`) en `src/cuentas/models.py` + migración
-- [ ] T015 Crear `Operador` (OneToOne `auth.User`, FK `biblioteca`, `es_central`, `nombre_visible`) en `src/cuentas/models.py` + migración
-- [ ] T016 Configurar auth en settings: `PASSWORD_HASHERS` con Argon2, validadores (mínimo 8), sesiones en BD con cierre por inactividad (`SESSION_COOKIE_AGE`, `SESSION_SAVE_EVERY_REQUEST=True`), cookies (`SECURE=False` localhost, `SAMESITE='Lax'`, `HTTPONLY=True`), e integrar **django-axes** (bloqueo 5 intentos / 10 min)
-- [ ] T017 [P] `SoloCentralMixin` + permiso `cuentas.gestion` en `src/cuentas/permissions.py`
-- [ ] T018 Crear `EntradaAuditoria` (biblioteca, `tipo_operacion`, entidad, `entidad_id`, actor→User, `fecha_hora`, `detalle` jsonb) en `src/cuentas/models.py` + migración
-- [ ] T019 Servicio de auditoría `registrar_auditoria(actor, tipo, entidad, entidad_id, detalle=None)` y mixin/decorador `ConAuditoria` para vistas de escritura en `src/cuentas/services.py` (append-only)
-- [ ] T020 Vistas y plantillas de acceso: `/inicio/alta-biblioteca/` (solo si no hay `Biblioteca`), `/acceso/entrar/`, `/acceso/salir/`, más flujo "cambiar de operador" y aviso de cierre por inactividad, en `src/cuentas/views.py` + `src/cuentas/urls.py` + `src/cuentas/templates/cuentas/`
-- [ ] T021 [P] Management commands `crear_biblioteca` y `crear_operador` en `src/cuentas/management/commands/`
-- [ ] T022 Crear `ParametrosPrestamo` (OneToOne `biblioteca`, `plazo_dias=15`, `max_prestamos_persona=3`) en `src/configuracion/models.py` + migración + helper `get_parametros()` (get-or-create)
-- [ ] T023 Plantilla base `src/common/templates/common/base.html` (Bootstrap + HTMX, barra con operador actual y "salir", zona de mensajes, indicador de estado de conexión) y `urls.py` raíz con endpoint de *ping* de conexión en `src/gestion_biblioteca/urls.py`
-- [ ] T024 `desktop/launcher.py` (waitress en `127.0.0.1:<puerto libre>` en un hilo + ventana `pywebview`; ejecuta `migrate` si el esquema está desactualizado) y `desktop/build.spec` (PyInstaller *one-dir*)
+- [X] T008 Configurar la conexión a **Supabase (session pooler)** en settings: `DATABASE_URL` con `sslmode=require`, puerto 5432, `CONN_MAX_AGE=0`, driver psycopg 3; documentar en `.env.example`
+- [X] T009 Crear la app `common`: modelo abstracto `ModeloBase` (id, `creado_en`, `actualizado_en`) en `src/common/models.py`
+- [X] T010 [P] Migración inicial que habilita las extensiones PostgreSQL `unaccent` y `pg_trgm` (`CreateExtension`) y crea el wrapper SQL `immutable_unaccent` (IMMUTABLE) en `src/common/migrations/0001_extensiones.py`
+- [X] T011 [P] Utilidades en `src/common/utils.py`: `normalizar_texto()` (lower + unaccent) y `sumar_dias_naturales(fecha, dias)`; tests en `tests/unit/test_utils.py`
+- [X] T012 [P] Middleware de error de conexión (`OperationalError`/`InterfaceError` → página "sin conexión con la base de datos") en `src/common/middleware.py` + plantilla `src/common/templates/common/sin_conexion.html`
+- [X] T013 [P] Configurar logging a fichero rotativo (`%LOCALAPPDATA%/BibliotecaMunicipal/logs/`) + consola en dev, en `src/gestion_biblioteca/settings.py`
+- [X] T014 Crear `Biblioteca` (nombre, contacto, `creada_por_email`) en `src/cuentas/models.py` + migración
+- [X] T015 Crear `Operador` (OneToOne `auth.User`, FK `biblioteca`, `es_central`, `nombre_visible`) en `src/cuentas/models.py` + migración
+- [X] T016 Configurar auth en settings: `PASSWORD_HASHERS` con Argon2, validadores (mínimo 8), sesiones en BD con cierre por inactividad (`SESSION_COOKIE_AGE`, `SESSION_SAVE_EVERY_REQUEST=True`), cookies (`SECURE=False` localhost, `SAMESITE='Lax'`, `HTTPONLY=True`), e integrar **django-axes** (bloqueo 5 intentos / 10 min)
+- [X] T017 [P] `SoloCentralMixin` + permiso `cuentas.gestion` en `src/cuentas/permissions.py`
+- [X] T018 Crear `EntradaAuditoria` (biblioteca, `tipo_operacion`, entidad, `entidad_id`, actor→User, `fecha_hora`, `detalle` jsonb) en `src/cuentas/models.py` + migración
+- [X] T019 Servicio de auditoría `registrar_auditoria(actor, tipo, entidad, entidad_id, detalle=None)` y mixin/decorador `ConAuditoria` para vistas de escritura en `src/cuentas/services.py` (append-only)
+- [X] T020 Vistas y plantillas de acceso: `/inicio/alta-biblioteca/` (solo si no hay `Biblioteca`), `/acceso/entrar/`, `/acceso/salir/`, más flujo "cambiar de operador" y aviso de cierre por inactividad, en `src/cuentas/views.py` + `src/cuentas/urls.py` + `src/cuentas/templates/cuentas/`
+- [X] T021 [P] Management commands `crear_biblioteca` y `crear_operador` en `src/cuentas/management/commands/`
+- [X] T022 Crear `ParametrosPrestamo` (OneToOne `biblioteca`, `plazo_dias=15`, `max_prestamos_persona=3`) en `src/configuracion/models.py` + migración + helper `get_parametros()` (get-or-create)
+- [X] T023 Plantilla base `src/common/templates/common/base.html` (Bootstrap + HTMX, barra con operador actual y "salir", zona de mensajes, indicador de estado de conexión) y `urls.py` raíz con endpoint de *ping* de conexión en `src/gestion_biblioteca/urls.py`
+- [X] T024 `desktop/launcher.py` (waitress en `127.0.0.1:<puerto libre>` en un hilo + ventana `pywebview`; ejecuta `migrate` si el esquema está desactualizado) y `desktop/build.spec` (PyInstaller *one-dir*)
 
 **Checkpoint**: base lista — las historias de usuario pueden empezar
 
@@ -128,14 +128,14 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 ### Tests for User Story 6
 
 - [ ] T049 [P] [US6] Tests de contrato de `/inicio/alta-biblioteca/`, `/acceso/entrar/`, `/operadores/*` en `tests/contract/test_cuentas.py`
-- [ ] T050 [P] [US6] Test de integración: alta biblioteca → crear operador → login operador → atribución en `EntradaAuditoria`; desactivar → login falla; operador → 403 en configuración, en `tests/integration/test_us6_cuentas.py`
+- [X] T050 [P] [US6] Test de integración: alta biblioteca → crear operador → login operador → atribución en `EntradaAuditoria`; desactivar → login falla; operador → 403 en configuración, en `tests/integration/test_us6_cuentas.py`
 
 ### Implementation for User Story 6
 
-- [ ] T051 [US6] Vistas de gestión de operadores (listar, crear con validación de nombre de usuario único, desactivar/reactivar, restablecer contraseña) protegidas por `SoloCentralMixin` en `src/cuentas/views.py` + `src/cuentas/urls.py`
-- [ ] T052 [P] [US6] Plantillas de gestión de operadores (lista + formulario, validación de nombre de usuario en línea con HTMX) en `src/cuentas/templates/cuentas/`
-- [ ] T053 [P] [US6] Vista de auditoría `/auditoria/` con filtros `entidad`/`entidad_id` y paginación 25 + plantilla en `src/cuentas/`
-- [ ] T054 [US6] Reglas de visibilidad de navegación y aplicación de "solo central" (403 amable) en configuración y operadores; enlazar auditoría `alta_operador`/`baja_operador`
+- [X] T051 [US6] Vistas de gestión de operadores (listar, crear con validación de nombre de usuario único, desactivar/reactivar, restablecer contraseña) protegidas por `SoloCentralMixin` en `src/cuentas/views.py` + `src/cuentas/urls.py`
+- [X] T052 [P] [US6] Plantillas de gestión de operadores (lista + formulario, validación de nombre de usuario en línea con HTMX) en `src/cuentas/templates/cuentas/`
+- [X] T053 [P] [US6] Vista de auditoría `/auditoria/` con filtros `entidad`/`entidad_id` y paginación 25 + plantilla en `src/cuentas/`
+- [X] T054 [US6] Reglas de visibilidad de navegación y aplicación de "solo central" (403 amable) en configuración y operadores; enlazar auditoría `alta_operador`/`baja_operador`
 
 **Checkpoint**: US6 funcional; auditoría y atribución completas de extremo a extremo
 

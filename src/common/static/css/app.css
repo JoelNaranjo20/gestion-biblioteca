@@ -1,0 +1,26 @@
+/* Estilos propios mínimos. Bootstrap 5 se vendoriza en static/vendor/ (tarea T006);
+   mientras no esté, estas reglas mantienen la UI usable. */
+:root { --acento:#1d4ed8; --peligro:#b91c1c; --ok:#15803d; --borde:#d4d4d8; }
+* { box-sizing: border-box; }
+body { font-family: system-ui, "Segoe UI", Roboto, sans-serif; margin:0; color:#18181b; background:#fafafa; }
+.barra { display:flex; align-items:center; gap:1rem; padding:.6rem 1rem; background:#111827; color:#fff; }
+.barra a { color:#c7d2fe; text-decoration:none; }
+.barra .sep { flex:1; }
+.contenido { max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; }
+.card { background:#fff; border:1px solid var(--borde); border-radius:.5rem; padding:1rem 1.25rem; margin-bottom:1rem; }
+table { border-collapse: collapse; width:100%; }
+th, td { text-align:left; padding:.45rem .6rem; border-bottom:1px solid var(--borde); }
+.btn { display:inline-block; padding:.45rem .9rem; border-radius:.375rem; border:1px solid var(--acento);
+       background:var(--acento); color:#fff; cursor:pointer; text-decoration:none; font-size:.95rem; }
+.btn.secundario { background:#fff; color:var(--acento); }
+.btn.peligro { background:var(--peligro); border-color:var(--peligro); }
+.msg { padding:.6rem .9rem; border-radius:.375rem; margin-bottom:.5rem; border:1px solid var(--borde); }
+.msg.success { background:#dcfce7; border-color:#86efac; }
+.msg.error { background:#fee2e2; border-color:#fca5a5; }
+.text-danger { color: var(--peligro); }
+.text-success { color: var(--ok); }
+.vencido { color: var(--peligro); font-weight:600; }
+label { display:block; margin:.6rem 0 .2rem; font-weight:600; font-size:.9rem; }
+input, select, textarea { width:100%; padding:.45rem .6rem; border:1px solid var(--borde); border-radius:.375rem; font:inherit; }
+.estado-conexion { font-size:.8rem; padding:.15rem .5rem; border-radius:1rem; background:#065f46; }
+.estado-conexion.ko { background:var(--peligro); }

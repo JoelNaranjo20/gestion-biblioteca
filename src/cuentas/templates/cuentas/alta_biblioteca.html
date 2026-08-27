@@ -1,0 +1,14 @@
+{% extends "common/base.html" %}
+{% block titulo %}Alta de la biblioteca{% endblock %}
+{% block contenido %}
+  <div class="card" style="max-width:520px;margin:2rem auto">
+    <h1>Dar de alta la biblioteca</h1>
+    <p>Crea la <strong>cuenta central</strong>. Desde ella podrás añadir subcuentas de operador
+    (sin correo) para el personal.</p>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p><button class="btn" type="submit">Crear cuenta central</button></p>
+    </form>
+  </div>
+{% endblock %}
