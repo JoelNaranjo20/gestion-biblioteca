@@ -107,6 +107,25 @@ def fijar_estado_operador(*, operador: Operador, activo: bool, actor: User | Non
 
 
 @transaction.atomic
+def renombrar_operador(*, operador: Operador, nombre_visible: str, actor: User | None = None) -> Operador:
+    nombre_visible = nombre_visible.strip()
+    if not nombre_visible:
+        raise ValidationError("El nombre visible es obligatorio.")
+    anterior = operador.nombre_visible
+    operador.nombre_visible = nombre_visible
+    operador.save(update_fields=["nombre_visible", "actualizado_en"])
+    registrar_auditoria(
+        actor=actor,
+        tipo="alta_operador",
+        entidad=EntradaAuditoria.Entidad.OPERADOR,
+        entidad_id=operador.id,
+        detalle={"accion": "renombrar", "de": anterior, "a": nombre_visible},
+        biblioteca=operador.biblioteca,
+    )
+    return operador
+
+
+@transaction.atomic
 def restablecer_password(*, operador: Operador, password: str, actor: User | None = None) -> None:
     operador.user.set_password(password)
     operador.user.save(update_fields=["password"])

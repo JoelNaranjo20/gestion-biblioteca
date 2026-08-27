@@ -89,8 +89,17 @@ def titulo_editar(request, pk):
 
 @login_required
 def titulo_detalle(request, pk):
+    from django.db.models import Prefetch
+
+    from prestamos.models import Prestamo
+
     titulo = get_object_or_404(titulos_con_recuento(), pk=pk)
-    ejemplares = titulo.ejemplares.select_related("titulo").all()
+    activos = Prestamo.objects.filter(
+        estado_registro=Prestamo.EstadoRegistro.EFECTIVO, fecha_devolucion_real__isnull=True
+    ).select_related("persona")
+    ejemplares = titulo.ejemplares.select_related("titulo").prefetch_related(
+        Prefetch("prestamos", queryset=activos, to_attr="prestamo_activo_lst")
+    )
     return render(request, "catalogo/titulo_detalle.html", {"titulo": titulo, "ejemplares": ejemplares})
 
 

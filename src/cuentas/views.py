@@ -11,13 +11,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView
 
-from .forms import AltaBibliotecaForm, OperadorForm, RestablecerPasswordForm
+from .forms import (
+    AltaBibliotecaForm,
+    OperadorForm,
+    RenombrarOperadorForm,
+    RestablecerPasswordForm,
+)
 from .models import Biblioteca, EntradaAuditoria, Operador
 from .permissions import SoloCentralMixin, es_central
 from .services import (
     alta_biblioteca,
     crear_operador,
     fijar_estado_operador,
+    renombrar_operador,
     restablecer_password,
 )
 
@@ -110,6 +116,25 @@ def _cambiar_estado_operador(request, pk, *, activo: bool):
     fijar_estado_operador(operador=operador, activo=activo, actor=request.user)
     messages.success(request, f"Operador {'reactivado' if activo else 'desactivado'}.")
     return redirect("cuentas:operador_lista")
+
+
+def operador_renombrar(request, pk):
+    if not es_central(request.user):
+        return _prohibido(request)
+    operador = get_object_or_404(Operador, pk=pk)
+    if request.method == "POST":
+        form = RenombrarOperadorForm(request.POST)
+        if form.is_valid():
+            renombrar_operador(
+                operador=operador,
+                nombre_visible=form.cleaned_data["nombre_visible"],
+                actor=request.user,
+            )
+            messages.success(request, "Nombre del operador actualizado.")
+            return redirect("cuentas:operador_lista")
+    else:
+        form = RenombrarOperadorForm(initial={"nombre_visible": operador.nombre_visible})
+    return render(request, "cuentas/operador_renombrar.html", {"form": form, "operador": operador})
 
 
 def operador_restablecer(request, pk):

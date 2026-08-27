@@ -38,11 +38,21 @@ Aplicación **de escritorio** para el personal de una biblioteca municipal (vari
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-`.specify/memory/constitution.md` es todavía la plantilla sin rellenar: **no hay principios ratificados ni puertas que exigir**. No se detectan violaciones. La sección Complexity Tracking queda vacía.
+Evaluado contra `.specify/memory/constitution.md` **v1.0.0** (ratificada 2026-08-27):
 
-**Recomendación**: ejecutar `/speckit-constitution` para fijar principios (p. ej. simplicidad/YAGNI, pruebas antes de implementar, trazabilidad de datos) antes de `/speckit-implement`. No bloquea este plan.
+| Principio | Veredicto |
+|---|---|
+| I · Desarrollo dirigido por especificación | ✅ Todo el diseño se traza a FR/US de `spec.md`; flujo `specify → clarify → plan → tasks → implement`. |
+| II · Pruebas antes de implementar (NO NEGOCIABLE) | ✅ `tasks.md` ordena, por historia, *Tests (contrato + integración)* antes de *Implementation*; las reglas de dominio llevan pruebas unitarias; la invariante "un préstamo activo por ejemplar" lleva prueba de concurrencia. |
+| III · Simplicidad y YAGNI | ✅ Un único proyecto Django, acceso a datos por el ORM, servicios de dominio como funciones/módulos, sin capa de repositorio, sin Celery/broker. Complexity Tracking vacío. |
+| IV · Integridad y trazabilidad de datos | ✅ Sin borrado (bajas por estado `retirado`/`anonimizada`/`anulado`, FK `PROTECT`); `EntradaAuditoria` append-only en cada escritura; invariantes garantizadas también en BD (índices únicos parciales). |
+| V · Privacidad por diseño (RGPD/LOPD) | ✅ Datos personales mínimos; anonimización automática a los 2 años y a petición (FR-034–FR-037). |
 
-**Evaluación tras Phase 1**: sin cambios — el diseño usa un único proyecto, sin patrones añadidos no justificados (acceso a datos por el ORM, servicios de dominio como funciones/módulos, sin capa de repositorio artificial).
+**Restricciones adicionales de la constitución**: el stack coincide con `tech-stack.md` (Django 5.2, PostgreSQL de Supabase vía ORM sin RLS, pywebview + PyInstaller, HTMX + Bootstrap 5, `django.contrib.auth`); es-ES / `Europe/Madrid`.
+
+**Sin violaciones.** No se requiere entrada en Complexity Tracking.
+
+**Re-evaluación tras Phase 1**: sin cambios.
 
 ## Project Structure
 

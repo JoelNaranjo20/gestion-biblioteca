@@ -66,3 +66,17 @@ def test_username_disponible_htmx(client, central, operador):
 def test_auditoria_lista_operador_ok(client, operador):
     client.force_login(operador.user)
     assert client.get("/auditoria/").status_code == 200
+
+
+def test_renombrar_operador(client, central, operador):
+    client.force_login(central.user)
+    assert client.get(f"/operadores/{operador.pk}/renombrar/").status_code == 200
+    r = client.post(f"/operadores/{operador.pk}/renombrar/", {"nombre_visible": "Mostrador Central"})
+    assert r.status_code == 302
+    operador.refresh_from_db()
+    assert operador.nombre_visible == "Mostrador Central"
+
+
+def test_renombrar_operador_403_para_operador(client, operador):
+    client.force_login(operador.user)
+    assert client.get(f"/operadores/{operador.pk}/renombrar/").status_code == 403

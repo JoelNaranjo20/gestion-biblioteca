@@ -19,6 +19,7 @@ from .services import (
     historial_persona,
     prestamos_activos,
     prestamos_vencidos,
+    prestamos_vencidos_de_persona,
     registrar_devolucion,
     registrar_prestamo,
     registrar_reclamacion,
@@ -50,6 +51,14 @@ def nuevo(request):
             except ValidationError as exc:
                 form.add_error(None, exc)
             else:
+                vencidos = prestamos_vencidos_de_persona(prestamo.persona).exclude(pk=prestamo.pk)
+                if vencidos:
+                    codigos = ", ".join(p.ejemplar.codigo for p in vencidos)
+                    messages.warning(
+                        request,
+                        f"Aviso: esta persona tiene {len(vencidos)} préstamo(s) vencido(s) sin "
+                        f"devolver ({codigos}). El préstamo se ha registrado igualmente.",
+                    )
                 messages.success(
                     request,
                     f"Préstamo registrado. Fecha límite: {prestamo.fecha_limite:%d/%m/%Y}.",

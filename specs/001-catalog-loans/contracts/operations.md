@@ -83,7 +83,7 @@ Cada fila enlaza con los FR que cubre. Los tests de contrato verifican método, 
 |---|---|---|---|---|---|---|
 | GET | `/privacidad/` | central | — | estado: nº de personas anonimizables hoy, última/próxima ejecución del proceso | `403` | FR-034 |
 | POST | `/privacidad/ejecutar-ahora/` | central | — | `302`: ejecuta el servicio de anonimización automática (idempotente); resumen de cuántas se anonimizaron | `403` | FR-034 |
-| POST | `/personas/<id>/anonimizar/` | central | `motivo?` | `302`: persona `anonimizada`, préstamos desligados | `409` si tiene préstamos activos (FR-036); `403` si operador | FR-035, FR-036, FR-037 |
+| POST | `/privacidad/personas/<id>/anonimizar/` | central | `motivo?` | `302`: persona `anonimizada`, préstamos desligados | `409` si tiene préstamos activos (FR-036); `403` si operador | FR-035, FR-036, FR-037 |
 
 ## Auditoría  *(operador ve; nadie edita)*
 

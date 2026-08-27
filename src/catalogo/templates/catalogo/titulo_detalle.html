@@ -17,12 +17,20 @@
   <div class="card">
     <h2>Ejemplares</h2>
     <table>
-      <thead><tr><th>Código</th><th>Estado</th><th>Ubicación</th><th></th></tr></thead>
+      <thead><tr><th>Código</th><th>Estado</th><th>Prestado a / vence</th><th>Ubicación</th><th></th></tr></thead>
       <tbody>
         {% for ej in ejemplares %}
         <tr>
           <td>{{ ej.codigo }}</td>
           <td>{{ ej.get_estado_display }}{% if ej.esta_retirado %} — {{ ej.motivo_retirada }}{% endif %}</td>
+          <td>
+            {% with p=ej.prestamo_activo_lst.0 %}
+              {% if p %}
+                {% if p.persona %}{{ p.persona.nombre }} ({{ p.persona.documento }}){% else %}—{% endif %}
+                · vence {{ p.fecha_limite|date:"d/m/Y" }}{% if p.esta_vencido %} <span class="vencido">(vencido)</span>{% endif %}
+              {% else %}—{% endif %}
+            {% endwith %}
+          </td>
           <td>{{ ej.ubicacion|default:"—" }}</td>
           <td>
             <a href="{% url 'catalogo:ejemplar_historial' ej.pk %}">Historial</a>
@@ -34,7 +42,7 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">Sin ejemplares. Añade el primero.</td></tr>
+        <tr><td colspan="5">Sin ejemplares. Añade el primero.</td></tr>
         {% endfor %}
       </tbody>
     </table>

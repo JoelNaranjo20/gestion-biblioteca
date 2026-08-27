@@ -57,3 +57,10 @@ class OperadorForm(_ConPasswordConfirmada):
 
 class RestablecerPasswordForm(_ConPasswordConfirmada):
     pass
+
+
+class RenombrarOperadorForm(forms.Form):
+    nombre_visible = forms.CharField(label="Nombre visible", max_length=120)
+
+    def clean_nombre_visible(self):
+        return self.cleaned_data["nombre_visible"].strip()

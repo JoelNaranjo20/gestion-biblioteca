@@ -131,12 +131,12 @@ Reglas (trazadas a FR-034/FR-036/FR-037):
 
 ---
 
-## Cuestiones abiertas (no bloquean; a decidir en `/speckit-tasks` o durante la implementación)
+## Cuestiones abiertas — estado tras la implementación
 
-| Tema | Estado | Propuesta por defecto |
-|------|--------|-----------------------|
-| Valor exacto de inactividad de sesión | abierto, bajo impacto | 30 min |
-| Copia de seguridad / RPO-RTO (fiabilidad del spec, pendiente) | abierto, bajo-medio | Backups automáticos de Supabase + verificación mensual documentada |
-| Signatura topográfica / ubicación física como campo del ejemplar | abierto, bajo-medio | Añadir campo opcional `ubicacion` en `Ejemplar` (barato, no bloquea) |
-| Nivel de permisos: ¿un solo tipo de operador o varios? | asumido "uno" en el spec | `es_central` (gestión) vs operador; ampliable con un modelo de roles |
-| Empaquetado: `.exe` único vs instalador (MSI) | abierto | PyInstaller onedir + acceso directo; MSI si el Ayuntamiento lo exige |
+| Tema | Estado | Resolución |
+|------|--------|------------|
+| Valor exacto de inactividad de sesión | ✅ resuelto | `SESSION_INACTIVIDAD_SEGUNDOS = 1800` (30 min) en `settings.py` / `.env.example` |
+| Copia de seguridad / RPO-RTO | ✅ resuelto | Backups automáticos de Supabase + `pg_dump` periódico + verificación mensual — `docs/DESPLIEGUE.md` §4 |
+| Signatura topográfica / ubicación del ejemplar | ✅ resuelto | Campo opcional `ubicacion` en `Ejemplar` (modelo, formulario, `spec.md` §Key Entities, `data-model.md`) |
+| Nivel de permisos: ¿un tipo de operador o varios? | ✅ resuelto | `es_central` (gestión) vs operador; sin modelo de roles adicional (YAGNI) |
+| Empaquetado: `.exe` único vs MSI | ✅ resuelto | PyInstaller *onedir* + acceso directo; MSI documentado como opción en `docs/DESPLIEGUE.md` §2 |

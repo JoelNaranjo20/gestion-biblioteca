@@ -52,7 +52,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 - [X] T016 Configurar auth en settings: `PASSWORD_HASHERS` con Argon2, validadores (mínimo 8), sesiones en BD con cierre por inactividad (`SESSION_COOKIE_AGE`, `SESSION_SAVE_EVERY_REQUEST=True`), cookies (`SECURE=False` localhost, `SAMESITE='Lax'`, `HTTPONLY=True`), e integrar **django-axes** (bloqueo 5 intentos / 10 min)
 - [X] T017 [P] `SoloCentralMixin` + permiso `cuentas.gestion` en `src/cuentas/permissions.py`
 - [X] T018 Crear `EntradaAuditoria` (biblioteca, `tipo_operacion`, entidad, `entidad_id`, actor→User, `fecha_hora`, `detalle` jsonb) en `src/cuentas/models.py` + migración
-- [X] T019 Servicio de auditoría `registrar_auditoria(actor, tipo, entidad, entidad_id, detalle=None)` y mixin/decorador `ConAuditoria` para vistas de escritura en `src/cuentas/services.py` (append-only)
+- [X] T019 Servicio de auditoría `registrar_auditoria(actor, tipo, entidad, entidad_id, detalle=None)` (append-only) en `src/cuentas/services.py`, invocado con `actor=request.user` explícito desde cada servicio de escritura
 - [X] T020 Vistas y plantillas de acceso: `/inicio/alta-biblioteca/` (solo si no hay `Biblioteca`), `/acceso/entrar/`, `/acceso/salir/`, más flujo "cambiar de operador" y aviso de cierre por inactividad, en `src/cuentas/views.py` + `src/cuentas/urls.py` + `src/cuentas/templates/cuentas/`
 - [X] T021 [P] Management commands `crear_biblioteca` y `crear_operador` en `src/cuentas/management/commands/`
 - [X] T022 Crear `ParametrosPrestamo` (OneToOne `biblioteca`, `plazo_dias=15`, `max_prestamos_persona=3`) en `src/configuracion/models.py` + migración + helper `get_parametros()` (get-or-create)
@@ -80,7 +80,7 @@ description: "Task list — Catálogo y Préstamos de la Biblioteca Municipal"
 - [X] T028 [P] [US1] Modelo `Ejemplar` (`codigo` único, `estado` enum disponible/prestado/retirado, `motivo_retirada`, `ubicacion` opcional; índice `(titulo, estado)`) en `src/catalogo/models.py` + migración
 - [X] T029 [P] [US1] Factories de `Titulo` y `Ejemplar` en `tests/factories.py`
 - [X] T030 [US1] Servicios de catálogo en `src/catalogo/services.py`: `crear_titulo`/`editar_titulo` (validan título+autor; avisan de ISBN duplicado y continúan tras confirmación), `crear_ejemplar` (rechaza código duplicado), `retirar_ejemplar` (bloquea si `prestado`), anotación de recuento total/disponibles
-- [X] T031 [US1] Guard de borrado: impedir eliminar `Titulo`/`Ejemplar` con préstamos registrados (FR-007) en `src/catalogo/services.py`
+- [X] T031 [US1] Impedir el borrado de `Titulo`/`Ejemplar` con préstamos registrados (FR-007): `on_delete=PROTECT` en las FK de `Prestamo` y `CorreccionOperacion` hacia `Ejemplar`/`Titulo`; la baja es vía estado `retirado`
 - [X] T032 [US1] Vistas de título (`nuevo`, `editar`, `detalle` con lista de ejemplares y totales/disponibles) y de ejemplar (`añadir`, `retirar` con motivo) en `src/catalogo/views.py` + `src/catalogo/urls.py`
 - [X] T033 [P] [US1] Plantillas: formulario de título, detalle de título con ejemplares, modal de retirada (Bootstrap/crispy) en `src/catalogo/templates/catalogo/`
 - [X] T034 [US1] Registrar auditoría de escrituras de catálogo (`alta_titulo`, `edicion_titulo`, `alta_ejemplar`, `retirada_ejemplar`) vía `ConAuditoria`

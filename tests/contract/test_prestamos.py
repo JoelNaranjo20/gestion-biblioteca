@@ -107,3 +107,43 @@ def test_persona_historial_endpoint(login, central, parametros, ejemplar):
     r = login.get("/personas/historial/?documento=55X")
     assert r.status_code == 200
     assert b"55X" in r.content or b"Marta" in r.content
+
+
+def test_prestar_avisa_de_vencidos_sin_bloquear(login, central, parametros, biblioteca):
+    """FR-021: al prestar, si la persona tiene préstamos vencidos, avisa pero no bloquea."""
+    from catalogo.services import crear_ejemplar, crear_titulo
+
+    t = crear_titulo(biblioteca=biblioteca, titulo="T", autor="A", actor=central.user)
+    crear_ejemplar(titulo_obj=t, codigo="V-1", actor=central.user)
+    crear_ejemplar(titulo_obj=t, codigo="V-2", actor=central.user)
+    # préstamo vencido para "77Y"
+    from prestamos.services import registrar_prestamo
+
+    registrar_prestamo(actor=central.user, codigo="V-1", documento="77Y", nombre="Vic", hoy=datetime.date(2020, 1, 1))
+    r = login.post(
+        "/prestamos/nuevo/",
+        {"codigo": "V-2", "documento": "77Y", "nombre": "Vic", "contacto": ""},
+        follow=True,
+    )
+    assert r.status_code == 200
+    cuerpo = r.content.lower()
+    assert "vencido" in cuerpo.decode()
+    # el segundo préstamo se registró igualmente
+    from prestamos.models import Prestamo
+
+    assert Prestamo.objects.filter(ejemplar__codigo="V-2").exists()
+
+
+def test_titulo_detalle_muestra_prestatario_y_fecha_limite(login, central, parametros, biblioteca):
+    """FR-012: la vista de título muestra, para los ejemplares prestados, persona y fecha límite."""
+    from catalogo.models import Titulo
+    from catalogo.services import crear_ejemplar, crear_titulo
+    from prestamos.services import registrar_prestamo
+
+    t = crear_titulo(biblioteca=biblioteca, titulo="Detalle", autor="A", actor=central.user)
+    crear_ejemplar(titulo_obj=t, codigo="DT-1", actor=central.user)
+    registrar_prestamo(actor=central.user, codigo="DT-1", documento="90Z", nombre="Prestataria X")
+    r = login.get(f"/catalogo/titulos/{Titulo.objects.get(titulo='Detalle').pk}/")
+    assert r.status_code == 200
+    assert b"Prestataria X" in r.content
+    assert b"vence" in r.content

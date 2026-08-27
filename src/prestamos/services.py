@@ -313,6 +313,22 @@ def prestamos_vencidos():
     return prestamos_activos().filter(fecha_limite__lt=hoy)
 
 
+def prestamos_vencidos_de_persona(persona: PersonaPrestataria):
+    """Préstamos activos y vencidos de una persona (para el aviso no bloqueante de FR-021)."""
+    if persona is None:
+        return Prestamo.objects.none()
+    return (
+        Prestamo.objects.filter(
+            persona=persona,
+            estado_registro=Prestamo.EstadoRegistro.EFECTIVO,
+            fecha_devolucion_real__isnull=True,
+            fecha_limite__lt=timezone.localdate(),
+        )
+        .select_related("ejemplar__titulo")
+        .order_by("fecha_limite")
+    )
+
+
 def historial_ejemplar(ejemplar: Ejemplar):
     return Prestamo.objects.filter(ejemplar=ejemplar).select_related("persona").order_by("-fecha_prestamo", "-id")
 
