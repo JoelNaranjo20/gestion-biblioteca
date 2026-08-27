@@ -12,11 +12,15 @@ Aplicación **de escritorio** para el personal de una biblioteca municipal (vari
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+ (3.11 y 3.13 disponibles en el equipo)
+**Stack completo y definitivo**: ver [tech-stack.md](./tech-stack.md) (decisiones confirmadas por el usuario el 2026-08-27). Resumen abajo.
 
-**Primary Dependencies**: Django 5.x · psycopg 3 (driver PostgreSQL) · pywebview (ventana de escritorio) · PyInstaller (empaquetado Windows) · pytest + pytest-django + factory_boy (tests) · django-environ (configuración por entorno). Extensiones PostgreSQL: `unaccent`, `pg_trgm`.
+**Language/Version**: Python 3.12+ (objetivo 3.13); gestionado con `uv`.
 
-**Storage**: PostgreSQL gestionado por Supabase (nube). El esquema lo poseen y versionan las migraciones de Django. Conexión por el *session pooler* de Supabase (puerto 5432) con `sslmode=require`. Sin Row-Level Security (aplicación monoinquilino por instalación; la autorización la aplica Django).
+**Primary Dependencies**: **Django 5.2 LTS** · **psycopg 3.2** · **pywebview 5.x** (ventana de escritorio, WebView2) · **waitress** (servidor WSGI en el paquete) · **PyInstaller 6.x** (empaquetado Windows) · **whitenoise** (estáticos) · **HTMX 2.x** + **Bootstrap 5.3** (UI, vendorizados) · **django-crispy-forms** + **crispy-bootstrap5** · **django-axes** + **argon2-cffi** (auth) · **django-environ** (config) · **pytest/pytest-django/factory_boy** + **ruff** (calidad). Extensiones PostgreSQL: `unaccent`, `pg_trgm`.
+
+**Storage**: PostgreSQL **gestionado por Supabase** (nube), accedido con el **ORM de Django directo** (sin `supabase-py`, PostgREST, Realtime ni GoTrue). El esquema lo poseen y versionan las migraciones de Django. Conexión por el *session pooler* de Supabase (puerto 5432) con `sslmode=require`, `CONN_MAX_AGE=0`. **Sin Row-Level Security** (aplicación monoinquilino por instalación; la autorización la aplica Django).
+
+**Auth**: `django.contrib.auth` para todo — cuenta central con email, subcuentas de operador con `username` sin email; Argon2; bloqueo con django-axes; cierre de sesión por inactividad.
 
 **Testing**: pytest + pytest-django (unitarios de servicios y reglas; integración con base de datos real de pruebas; `TransactionTestCase` para concurrencia; contrato de endpoints; un puñado de extremo a extremo con el cliente de test de Django).
 
@@ -53,6 +57,7 @@ specs/001-catalog-loans/
 ├── contracts/           # Fase 1 (/speckit-plan)
 │   ├── README.md
 │   └── operations.md
+├── tech-stack.md        # Stack tecnológico definitivo (confirmado 2026-08-27)
 ├── checklists/
 │   └── requirements.md  # Checklist de calidad del spec (/speckit-specify + /speckit-clarify)
 └── tasks.md             # Fase 2 (/speckit-tasks — NO lo crea /speckit-plan)

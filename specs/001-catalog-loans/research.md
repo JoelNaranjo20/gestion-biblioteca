@@ -4,6 +4,8 @@
 
 Formato por tema: **Decisión** / **Motivo** / **Alternativas descartadas** / **Notas**.
 
+> **Confirmado por el usuario (2026-08-27)**: temas 1 (pywebview + PyInstaller), 2 (Supabase = Postgres gestionado, ORM directo, sin RLS), 3 (auth de Django para todo) y la UI (plantillas Django + HTMX + Bootstrap 5). Detalle consolidado en [tech-stack.md](./tech-stack.md).
+
 ---
 
 ## 1. Entrega como aplicación de escritorio de un proyecto Django (Windows)
